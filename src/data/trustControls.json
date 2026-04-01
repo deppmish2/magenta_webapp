@@ -1,0 +1,74 @@
+[
+  {
+    "id": "grounding",
+    "label": "Source grounding",
+    "status": "On",
+    "description": "Responses must cite approved sources before they are shown to the user.",
+    "evidence": "Current answer contains linked source cards with freshness metadata.",
+    "modes": ["consumer", "enterprise", "architect"]
+  },
+  {
+    "id": "privacy",
+    "label": "Privacy mode",
+    "status": "On",
+    "description": "Sensitive session context is minimized and protected before any answer leaves the orchestration layer.",
+    "evidence": "PII-sensitive fields are masked before logging or escalation.",
+    "modes": ["consumer", "enterprise", "architect"]
+  },
+  {
+    "id": "human-review",
+    "label": "Human review escalation",
+    "status": "On",
+    "description": "Low-confidence or sensitive intents can be routed to a specialist without losing context.",
+    "evidence": "Confidence thresholds are tied to escalation playbooks and live-agent routing.",
+    "modes": ["enterprise", "architect"]
+  },
+  {
+    "id": "policy",
+    "label": "Policy checks",
+    "status": "Passed",
+    "description": "Every answer is checked against deployment policy, product rules, and industry controls.",
+    "evidence": "The current answer passed residency and content policy gates.",
+    "modes": ["consumer", "enterprise", "architect"]
+  },
+  {
+    "id": "audit",
+    "label": "Audit logging",
+    "status": "Active",
+    "description": "Prompt, source, model route, and output evidence are captured for traceability.",
+    "evidence": "A structured answer trace is available for the active response.",
+    "modes": ["enterprise", "architect"]
+  },
+  {
+    "id": "regional",
+    "label": "Regional deployment",
+    "status": "EU / Germany",
+    "description": "The current deployment profile routes workloads through approved EU infrastructure.",
+    "evidence": "Gateway policy is locked to EU-resident retrieval and model services.",
+    "modes": ["enterprise", "architect"]
+  },
+  {
+    "id": "safety",
+    "label": "Content safety filters",
+    "status": "Active",
+    "description": "Unsafe or unsupported requests are filtered before an answer is composed.",
+    "evidence": "Risk classifiers and prompt shields are enforced at request time.",
+    "modes": ["consumer", "enterprise", "architect"]
+  },
+  {
+    "id": "pii",
+    "label": "PII protection",
+    "status": "Active",
+    "description": "Personal data is redacted or minimized before model processing and storage.",
+    "evidence": "Masking and retention controls are enabled inline for sensitive entities.",
+    "modes": ["enterprise", "architect"]
+  },
+  {
+    "id": "traceability",
+    "label": "Response traceability",
+    "status": "Enabled",
+    "description": "Every answer can be traced back to the system components and evidence used to create it.",
+    "evidence": "The architecture trace view maps answer generation to platform layers.",
+    "modes": ["architect"]
+  }
+]

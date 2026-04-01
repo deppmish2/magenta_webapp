@@ -1,0 +1,418 @@
+[
+  {
+    "id": "resp-roaming-business-eu",
+    "promptId": "roaming-business-eu",
+    "title": "Best-fit EU roaming for frequent business travel",
+    "executiveSummary": "For most EU business travelers, the best option is a plan that keeps domestic data allowances valid across EU countries, includes pooled usage alerts for the finance team, and offers 24/7 support if a line fails while someone is abroad.",
+    "detailedAnswer": [
+      "If the traveler moves between EU countries frequently, the strongest option is a business roaming bundle that mirrors the domestic allowance and adds fair-use monitoring rather than forcing separate country packs. That keeps the user experience simple and reduces expense surprises.",
+      "If the company has multiple travelers, pooled allowances with administrator alerts create better control than individual add-ons. Finance gets visibility, travelers stay connected, and support teams can intervene before a user loses service.",
+      "For higher-value roles such as executives or field engineers, pair the roaming plan with priority support and a digital service channel. The experience still feels consumer-simple, but the service posture is enterprise-ready."
+    ],
+    "takeaways": [
+      "Prioritize EU-wide domestic allowance carryover.",
+      "Use pooled alerts to avoid bill shock.",
+      "Attach premium support for high-dependency travelers."
+    ],
+    "sources": ["src-roaming-eu-policy", "src-roaming-support"],
+    "trustBadges": ["Grounded", "Policy-aligned", "Traveler-safe"],
+    "confidence": "93% grounded",
+    "trustReason": "This answer is grounded on the current roaming portfolio and the latest support handbook. Usage guidance is constrained to EU-regulated zones and excludes unsupported out-of-region assumptions.",
+    "followUps": [
+      "Show a simple comparison of pooled versus individual travel bundles.",
+      "What happens when a traveler leaves the EU?",
+      "Draft a recommendation for executives versus field teams."
+    ],
+    "modeGuidance": {
+      "consumer": "Focus on clarity, coverage, and support while keeping the answer simple.",
+      "enterprise": "Expose pooled controls, service tiers, and support routing for account teams.",
+      "architect": "Relate the answer to policy-aware offer retrieval and support workflow orchestration."
+    },
+    "trace": [
+      {
+        "step": "Intent detected",
+        "component": "Experience layer",
+        "detail": "The request is classified as travel mobility guidance with a commercial support dependency."
+      },
+      {
+        "step": "Grounded retrieval",
+        "component": "Retrieval layer",
+        "detail": "Roaming portfolio and traveler support documents are retrieved with current policy constraints."
+      },
+      {
+        "step": "Answer synthesis",
+        "component": "AI orchestration layer",
+        "detail": "The assistant produces a direct recommendation instead of a link list and keeps the explanation concise."
+      },
+      {
+        "step": "Trust packaging",
+        "component": "Governance layer",
+        "detail": "Citations, confidence, and approved regional guidance are attached before delivery."
+      }
+    ]
+  },
+  {
+    "id": "resp-fiveg-campus-simple",
+    "promptId": "fiveg-campus-simple",
+    "title": "5G campus networks in simple language",
+    "executiveSummary": "A 5G campus network is a private mobile network for a specific site, such as a factory, hospital, or logistics center. It gives the business reliable wireless coverage, low latency, and better control over who and what can connect.",
+    "detailedAnswer": [
+      "The simplest way to think about it is as a private, business-owned mobile zone. Instead of relying only on shared public coverage or Wi-Fi, the organization gets a dedicated wireless layer tuned for its own devices and workflows.",
+      "That matters when machines, sensors, robots, or vehicles need steady connections. A campus network can support movement, dense device populations, and more predictable performance than a one-size-fits-all network.",
+      "From an enterprise perspective, the value is not just speed. It is operational resilience, security segmentation, and the ability to connect industrial processes without building a maze of special-purpose networks."
+    ],
+    "takeaways": [
+      "Think private mobile zone, not just faster Wi-Fi.",
+      "Best for operationally critical and mobile environments.",
+      "Control and resilience are often more valuable than headline speed."
+    ],
+    "sources": ["src-5g-campus-brief", "src-5g-campus-architecture"],
+    "trustBadges": ["Explained simply", "Source-backed", "Operationally relevant"],
+    "confidence": "95% grounded",
+    "trustReason": "The answer uses the campus network solution brief for plain-language framing and validates the business explanation against the engineering reference architecture.",
+    "followUps": [
+      "Compare a campus network with enterprise Wi-Fi in one table.",
+      "Which industries benefit most from private 5G first?",
+      "Show the architecture behind a secure campus rollout."
+    ],
+    "modeGuidance": {
+      "consumer": "Keep jargon low and map the answer to business outcomes quickly.",
+      "enterprise": "Introduce identity, segmentation, and operational resilience as differentiators.",
+      "architect": "Tie the explanation to on-site edge, identity, and slice-aware control patterns."
+    },
+    "trace": [
+      {
+        "step": "Language simplification",
+        "component": "AI orchestration layer",
+        "detail": "The assistant routes the answer through a plain-language explanation template."
+      },
+      {
+        "step": "Technical grounding",
+        "component": "Source layer",
+        "detail": "Both the business brief and reference architecture are used to prevent oversimplification."
+      },
+      {
+        "step": "Response shaping",
+        "component": "Experience layer",
+        "detail": "The answer is condensed for an executive-friendly, non-engineering audience."
+      },
+      {
+        "step": "Traceability attached",
+        "component": "Operations layer",
+        "detail": "The explanation path is logged so the answer can be audited or improved later."
+      }
+    ]
+  },
+  {
+    "id": "resp-contract-support-changes",
+    "promptId": "contract-support-changes",
+    "title": "What changed in contract support options",
+    "executiveSummary": "The new support model shifts routine requests to digital triage, accelerates severe-incident routing, and makes the difference between standard and premium tiers easier to understand. Premium contracts now emphasize proactive care instead of just faster escalation.",
+    "detailedAnswer": [
+      "The biggest operational change is the digital front door. Customers can start in one guided service experience, and the platform determines whether the issue belongs in self-service, assisted support, or named-service escalation.",
+      "The second change is clearer severity handling. Critical incidents reach specialist teams faster, while standard requests are triaged with more automation before they consume expert capacity.",
+      "Commercially, premium tiers now signal ongoing service posture rather than only incident speed. That makes it easier to explain the value of named contacts, proactive alerts, and multilingual coverage."
+    ],
+    "takeaways": [
+      "Digital triage is the new default entry point.",
+      "Severe incidents move faster through the support chain.",
+      "Premium support now means proactive service, not only reactive escalation."
+    ],
+    "sources": ["src-support-policy", "src-support-catalog"],
+    "trustBadges": ["Current policy", "Commercially aligned", "Support-safe"],
+    "confidence": "92% grounded",
+    "trustReason": "The response is limited to the latest support policy update and the commercial comparison catalog, which keeps the answer aligned with both operations and sales messaging.",
+    "followUps": [
+      "Summarize the changes in one email for account managers.",
+      "When should a customer move from standard to premium support?",
+      "Show which changes affect multinational customers most."
+    ],
+    "modeGuidance": {
+      "consumer": "Keep the answer concise and orient it around what changed for the user.",
+      "enterprise": "Surface how triage and proactive service change the operating model.",
+      "architect": "Connect support changes to routing logic, escalation APIs, and agent assist layers."
+    },
+    "trace": [
+      {
+        "step": "Commercial intent",
+        "component": "Channels",
+        "detail": "The request is treated as contract clarification, not a technical fault."
+      },
+      {
+        "step": "Policy retrieval",
+        "component": "Retrieval layer",
+        "detail": "Only active policy and service catalog sources are retrieved to avoid stale contract terms."
+      },
+      {
+        "step": "Answer normalization",
+        "component": "AI orchestration layer",
+        "detail": "The assistant converts operational changes into user-facing implications."
+      },
+      {
+        "step": "Audit logging",
+        "component": "Governance layer",
+        "detail": "The answer and supporting policy references are retained for review and reuse."
+      }
+    ]
+  },
+  {
+    "id": "resp-secure-ai-customer-service",
+    "promptId": "secure-ai-customer-service",
+    "title": "Secure telecom customer service assistant",
+    "executiveSummary": "Design the assistant as a grounded answer engine inside the customer journey, not as a stand-alone chatbot. It should retrieve from approved knowledge, apply policy checks before responding, and escalate seamlessly to human agents when confidence is low or intent is sensitive.",
+    "detailedAnswer": [
+      "Start with a tightly scoped first release. Choose high-volume, low-risk intents such as plan questions, roaming guidance, and support updates. Back each intent with approved knowledge sources and explicit escalation boundaries.",
+      "Route every answer through a trust pipeline. That means retrieval over policy-approved content, PII-aware redaction, confidence scoring, and citation packaging before the response reaches the customer. The UI should make trust visible without forcing the user to study a compliance manual.",
+      "Finally, design for operating reality. Contact centers need session history, context handoff, prompt analytics, and incident rollback. The assistant should improve over time through evaluation loops, but governance has to be built in from day one."
+    ],
+    "takeaways": [
+      "Integrate into the service journey instead of adding a generic chat box.",
+      "Treat grounding and escalation as core product capabilities.",
+      "Design the first release around measurable, lower-risk intents."
+    ],
+    "sources": ["src-secure-assistant-pattern", "src-contact-center-handoff"],
+    "trustBadges": ["Human-ready", "Policy-gated", "Enterprise-grade"],
+    "confidence": "96% grounded",
+    "trustReason": "The design recommendation is grounded on the current secure assistant blueprint and contact-center handoff standard, which define the approved patterns for grounded answering and low-confidence escalation.",
+    "followUps": [
+      "Map this design to a telco contact-center reference architecture.",
+      "What metrics should the rollout team watch in week one?",
+      "Which intents are safe enough for the first pilot?"
+    ],
+    "modeGuidance": {
+      "consumer": "Explain the assistant as safer and easier support inside one app.",
+      "enterprise": "Emphasize grounding, handoff, logging, and policy boundaries.",
+      "architect": "Reveal orchestration, gateway, and governance layers behind the experience."
+    },
+    "trace": [
+      {
+        "step": "Intent scoping",
+        "component": "Experience layer",
+        "detail": "The request is framed as solution design for telecom customer service."
+      },
+      {
+        "step": "Pattern retrieval",
+        "component": "Source layer",
+        "detail": "Blueprint and handoff standards are retrieved from approved enterprise repositories."
+      },
+      {
+        "step": "Policy-aware synthesis",
+        "component": "Governance layer",
+        "detail": "The design response is checked against privacy, escalation, and traceability guardrails."
+      },
+      {
+        "step": "Operational packaging",
+        "component": "Operations layer",
+        "detail": "Suggested rollout metrics and human-support integration points are attached."
+      }
+    ]
+  },
+  {
+    "id": "resp-eu-residency-answer-engine",
+    "promptId": "eu-residency-answer-engine",
+    "title": "Deploying an answer engine with EU data residency",
+    "executiveSummary": "Use a regional AI gateway as the control point. Keep retrieval indexes, prompt logs, session stores, and approved model endpoints inside EU regions, and enforce residency before any model call or tool execution happens.",
+    "detailedAnswer": [
+      "A strong residency design starts before the model. Identity, session context, and grounding all need to remain in-region, otherwise the architecture still leaks risk even if the model endpoint itself is hosted in Europe.",
+      "The cleanest pattern is a policy-enforcing gateway in front of multiple approved models. That gateway decides which model can run, which tools can be invoked, where logs are written, and whether the answer can leave the policy boundary at all.",
+      "To scale well, pair the residency controls with operational features: regional fallback, tenant-aware routing, prompt caching, and automated policy evidence. That gives the business a fast answer engine while keeping compliance visible to auditors and architects."
+    ],
+    "takeaways": [
+      "Residency must cover data flow end to end, not only model hosting.",
+      "A gateway is the right place to enforce residency, cost, and policy together.",
+      "Regional fallback and tenant routing matter once the pilot becomes a platform."
+    ],
+    "sources": ["src-eu-residency-controls", "src-model-gateway"],
+    "trustBadges": ["EU routed", "Tenant-aware", "Governed"],
+    "confidence": "97% grounded",
+    "trustReason": "The recommendation uses the EU residency control set and the platform model-gateway standard, which jointly define how data flow and model routing stay inside approved regional boundaries.",
+    "followUps": [
+      "Show a sovereign cloud reference architecture for this pattern.",
+      "What changes when a second region is added for resilience?",
+      "Which audit logs matter most for residency reviews?"
+    ],
+    "modeGuidance": {
+      "consumer": "Translate residency into trust and privacy without technical overload.",
+      "enterprise": "Highlight regional control points, auditability, and tenant boundaries.",
+      "architect": "Drill into gateway policies, retrieval isolation, and regional failover."
+    },
+    "trace": [
+      {
+        "step": "Residency policy selection",
+        "component": "Governance layer",
+        "detail": "The request is bound to an EU-only deployment policy before answer planning begins."
+      },
+      {
+        "step": "Regional source check",
+        "component": "Retrieval layer",
+        "detail": "Only EU-hosted indexes and approved policy documents are queried."
+      },
+      {
+        "step": "Model routing",
+        "component": "Model gateway",
+        "detail": "The gateway selects an in-region model endpoint and applies cost and latency controls."
+      },
+      {
+        "step": "Evidence packaging",
+        "component": "Operations layer",
+        "detail": "Traceability records capture which region, policy, and source set were used."
+      }
+    ]
+  },
+  {
+    "id": "resp-public-sector-workspace",
+    "promptId": "public-sector-workspace",
+    "title": "Balancing productivity and compliance in a public-sector AI workspace",
+    "executiveSummary": "The workspace should feel like a fast, integrated copilot for staff, but every action must remain role-aware, source-bounded, and reviewable. Productivity comes from guided retrieval and reusable workflows, not from unrestricted model freedom.",
+    "detailedAnswer": [
+      "A good public-sector workspace starts with bounded knowledge domains. Staff should only see the data, tools, and drafting actions that align with their role and case type. That keeps the experience useful without opening uncontrolled access paths.",
+      "Compliance should be built into the workflow rather than bolted on at the end. Sensitive drafts can trigger human review, approved sources can be pinned automatically, and every generated output can carry trace links back to the records used.",
+      "The productivity win comes from structured assistance: summarize case files, compare policy documents, draft responses, and surface the next required step. The platform stays compliant because every workflow is routed through controls the organization already trusts."
+    ],
+    "takeaways": [
+      "Use role-aware workspaces instead of one generic copilot.",
+      "Build review, source boundaries, and traceability into each workflow.",
+      "Productivity increases most when the AI accelerates known processes safely."
+    ],
+    "sources": ["src-public-sector-policy", "src-public-sector-audit"],
+    "trustBadges": ["Role-aware", "Audit-ready", "Human-supervised"],
+    "confidence": "94% grounded",
+    "trustReason": "The guidance is grounded on the current public-sector workspace guardrails and auditability note, which establish boundaries for document access, approval workflows, and evidence retention.",
+    "followUps": [
+      "Show how this workspace differs from a commercial employee copilot.",
+      "Which workflows benefit most in a first pilot?",
+      "Map the approval steps into an operating model."
+    ],
+    "modeGuidance": {
+      "consumer": "Focus on safer, faster employee assistance in plain language.",
+      "enterprise": "Show the balance between governed productivity and operational adoption.",
+      "architect": "Expose role boundaries, workflow policies, and audit event design."
+    },
+    "trace": [
+      {
+        "step": "Role-sensitive planning",
+        "component": "AI orchestration layer",
+        "detail": "The workspace request is mapped to a governed employee-copilot pattern."
+      },
+      {
+        "step": "Policy retrieval",
+        "component": "Source layer",
+        "detail": "Guardrail and audit standards are retrieved from regulated-industry repositories."
+      },
+      {
+        "step": "Workflow binding",
+        "component": "Experience layer",
+        "detail": "The answer is framed around concrete, reviewable staff workflows."
+      },
+      {
+        "step": "Audit controls",
+        "component": "Governance layer",
+        "detail": "Traceability, approval expectations, and evidence retention are attached to the response."
+      }
+    ]
+  },
+  {
+    "id": "resp-genai-controls-millions",
+    "promptId": "genai-controls-millions",
+    "title": "Controls required before GenAI reaches millions of users",
+    "executiveSummary": "Before a GenAI service reaches mass scale, four control domains need to be production-ready: grounded retrieval, governance enforcement, operational resilience, and managed rollout. If any of those are immature, the user experience and enterprise risk posture will both degrade quickly.",
+    "detailedAnswer": [
+      "First, answers need grounding discipline. That means source quality rules, permission-aware retrieval, freshness checks, and confidence thresholds that determine when the system should answer and when it should escalate instead.",
+      "Second, governance cannot be manual. PII protection, policy checks, regional routing, audit logs, and human approval paths need to run inline, because millions of sessions eliminate the option to review exceptions one by one.",
+      "Third, production AI needs the same seriousness as other critical digital platforms: canary rollout, multi-model failover, rate limiting, tenant isolation, evaluation loops, and incident response. Scale is not only traffic volume; it is also how quickly mistakes propagate."
+    ],
+    "takeaways": [
+      "Grounding, governance, and operations must all be inline at production scale.",
+      "Mass rollout requires automated controls, not advisory checklists.",
+      "Canary releases and evaluation loops are central risk controls, not optional extras."
+    ],
+    "sources": ["src-rollout-controls", "src-observability-evals"],
+    "trustBadges": ["Scale-ready", "Observed", "Rollout-safe"],
+    "confidence": "98% grounded",
+    "trustReason": "The control recommendation is grounded on the current scale playbook and the observability and evaluation guide, which define the minimum operating controls for large-scale deployments.",
+    "followUps": [
+      "Show which controls should be implemented before pilot, launch, and scale-up.",
+      "Which metrics most clearly predict unsafe rollout drift?",
+      "Map these controls to a reference architecture."
+    ],
+    "modeGuidance": {
+      "consumer": "Translate the controls into safer, more reliable user experiences.",
+      "enterprise": "Present the controls as governance and operating-model prerequisites.",
+      "architect": "Reveal canary, failover, evals, and trace pipelines in platform terms."
+    },
+    "trace": [
+      {
+        "step": "Scale-risk classification",
+        "component": "Operations layer",
+        "detail": "The question is identified as a production-governance design scenario."
+      },
+      {
+        "step": "Control framework retrieval",
+        "component": "Source layer",
+        "detail": "Scale playbook and observability guidance are retrieved as authoritative references."
+      },
+      {
+        "step": "Design synthesis",
+        "component": "AI orchestration layer",
+        "detail": "The response is structured around control domains rather than generic best practices."
+      },
+      {
+        "step": "Architect trace",
+        "component": "Infrastructure layer",
+        "detail": "Each recommended control is mapped to platform responsibilities and rollout stages."
+      }
+    ]
+  },
+  {
+    "id": "resp-rag-vs-direct-answer",
+    "promptId": "rag-vs-direct-answer",
+    "title": "RAG versus direct web answer systems",
+    "executiveSummary": "Direct web answer systems are strong for broad, fast discovery across public information. Retrieval-augmented generation becomes the better pattern when the answer must respect enterprise permissions, internal knowledge, freshness policies, and auditability requirements.",
+    "detailedAnswer": [
+      "A direct web answer system optimizes for breadth and user speed. It searches public content, synthesizes a concise response, and keeps the interaction fluid. That works well when the question is general and the user mainly needs orientation.",
+      "RAG adds a controlled retrieval layer. Instead of trusting broad search alone, the system chooses from approved sources, applies access policies, and uses those results to ground the model's answer. This is the right move when the enterprise has sensitive documents, internal policies, or contractual obligations.",
+      "In practice, most enterprise platforms blend both patterns. Public search can answer general discovery questions, while policy-aware retrieval takes over for account-specific, regulated, or operationally sensitive answers. The architect's job is to route intelligently between them."
+    ],
+    "takeaways": [
+      "Use direct web answers for broad public discovery.",
+      "Use RAG when permissions, provenance, and internal knowledge matter.",
+      "The strongest enterprise pattern is selective routing between open and governed answer paths."
+    ],
+    "sources": ["src-rag-patterns", "src-web-answer-comparison"],
+    "trustBadges": ["Architect lens", "Source-routed", "Decision-ready"],
+    "confidence": "96% grounded",
+    "trustReason": "This comparison is grounded on the enterprise RAG architecture guide and the strategy memo comparing direct web answer systems, which together frame the trade-off between speed, breadth, and governance.",
+    "followUps": [
+      "Show a routing policy for public versus enterprise questions.",
+      "Which metrics prove RAG quality beyond latency?",
+      "Design a hybrid answer engine for telecom self-service."
+    ],
+    "modeGuidance": {
+      "consumer": "Keep the comparison intuitive and tied to user outcomes.",
+      "enterprise": "Highlight permission boundaries, provenance, and internal knowledge reuse.",
+      "architect": "Focus on routing logic, retrieval quality, and governance-aware model selection."
+    },
+    "trace": [
+      {
+        "step": "Strategy intent",
+        "component": "Channels",
+        "detail": "The request is classified as architecture comparison rather than product support."
+      },
+      {
+        "step": "Pattern retrieval",
+        "component": "Retrieval layer",
+        "detail": "RAG architecture guidance and direct answer strategy material are retrieved in parallel."
+      },
+      {
+        "step": "Comparative synthesis",
+        "component": "Model gateway",
+        "detail": "The platform selects an architecture-explainer prompt route with extended reasoning length."
+      },
+      {
+        "step": "Decision packaging",
+        "component": "Governance layer",
+        "detail": "Trade-offs are summarized with explicit trust and scale implications for enterprise review."
+      }
+    ]
+  }
+]

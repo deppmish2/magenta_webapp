@@ -1,0 +1,56 @@
+@import url("https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background:
+    radial-gradient(circle at top left, rgba(226, 0, 116, 0.2), transparent 30%),
+    radial-gradient(circle at 80% 20%, rgba(111, 0, 255, 0.14), transparent 24%),
+    linear-gradient(180deg, #09060d 0%, #050409 100%);
+  color: white;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(226, 0, 116, 0.35);
+}
+
+@layer components {
+  .glass-panel {
+    @apply rounded-[28px] border border-white/10 bg-white/5 shadow-panel backdrop-blur-xl;
+  }
+
+  .section-shell {
+    @apply relative overflow-hidden rounded-[32px] border border-white/10 bg-white/[0.03] px-6 py-10 shadow-panel sm:px-8 sm:py-12;
+  }
+
+  .section-grid {
+    @apply absolute inset-0 bg-hero-grid bg-[size:36px_36px] opacity-[0.06];
+  }
+
+  .section-noise {
+    background-image:
+      radial-gradient(circle at 20% 30%, rgba(226, 0, 116, 0.14), transparent 18%),
+      radial-gradient(circle at 80% 10%, rgba(255, 255, 255, 0.05), transparent 24%);
+  }
+}

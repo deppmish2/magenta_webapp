@@ -1,0 +1,38 @@
+[
+  {
+    "id": "customer-service-copilot",
+    "title": "Customer Service Copilot",
+    "businessProblem": "Support teams need faster, more consistent answers across high-volume requests without increasing handling time.",
+    "workflow": "Grounded assistant retrieves approved service content, drafts answers, and hands sensitive cases to specialists with preserved context.",
+    "trustRequirements": "Source-backed responses, PII protection, escalation paths, and audit-ready answer traces.",
+    "scalingConsiderations": ["Millions of customer interactions", "Burst traffic during incidents", "Multilingual response quality"],
+    "outcome": "Lower handle time, more consistent support quality, and safer self-service expansion."
+  },
+  {
+    "id": "employee-knowledge-assistant",
+    "title": "Employee Knowledge Assistant",
+    "businessProblem": "Employees lose time searching fragmented documents, policies, and internal guidance.",
+    "workflow": "An answer engine unifies search, retrieval, and concise synthesis inside a governed employee workspace.",
+    "trustRequirements": "Permission-aware retrieval, content freshness, workspace role boundaries, and usage analytics.",
+    "scalingConsiderations": ["Cross-country teams", "Document sprawl", "Role-based access at enterprise scale"],
+    "outcome": "Faster decision-making and stronger reuse of institutional knowledge."
+  },
+  {
+    "id": "network-operations-assistant",
+    "title": "Network Operations Assistant",
+    "businessProblem": "Operations teams need quick, contextual guidance during incidents without introducing unverified recommendations.",
+    "workflow": "The assistant correlates runbooks, network knowledge, and topology context to suggest safe next actions.",
+    "trustRequirements": "Strict source provenance, operator review, environment awareness, and incident logging.",
+    "scalingConsiderations": ["High-stress burst traffic", "Regional variation in infrastructure", "Operational traceability"],
+    "outcome": "Better operator productivity with fewer unsafe or inconsistent incident responses."
+  },
+  {
+    "id": "regulated-workspace",
+    "title": "Regulated Enterprise AI Workspace",
+    "businessProblem": "Knowledge workers in regulated sectors need AI acceleration without sacrificing reviewability or compliance.",
+    "workflow": "Role-aware copilots guide drafting, summarization, and workflow execution inside approved process boundaries.",
+    "trustRequirements": "Human approval, audit logs, residency controls, and policy-aware document access.",
+    "scalingConsiderations": ["Regional compliance obligations", "Tenant isolation", "Long-lived case histories"],
+    "outcome": "Measured productivity gains with evidence strong enough for risk and compliance stakeholders."
+  }
+]

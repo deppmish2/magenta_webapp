@@ -1,0 +1,58 @@
+[
+  {
+    "id": "sessions",
+    "label": "Active sessions",
+    "value": "18.4K",
+    "delta": "+12% vs yesterday",
+    "description": "Concurrent sessions across app, web, and assisted channels."
+  },
+  {
+    "id": "latency",
+    "label": "P95 latency",
+    "value": "1.7s",
+    "delta": "-180ms after cache tuning",
+    "description": "End-to-end answer latency including retrieval and policy checks."
+  },
+  {
+    "id": "retrieval-success",
+    "label": "Retrieval success rate",
+    "value": "97.8%",
+    "delta": "+1.4 points this week",
+    "description": "Requests where grounded sources met freshness and relevance thresholds."
+  },
+  {
+    "id": "groundedness",
+    "label": "Answer groundedness",
+    "value": "94.6%",
+    "delta": "Stable across regions",
+    "description": "Evaluator score showing whether answers stayed anchored to retrieved evidence."
+  },
+  {
+    "id": "escalation",
+    "label": "Human escalation rate",
+    "value": "4.3%",
+    "delta": "-0.6 points after prompt tuning",
+    "description": "Sessions sent to human review or assisted support because risk or confidence thresholds were hit."
+  },
+  {
+    "id": "cost",
+    "label": "Cost per 1K requests",
+    "value": "€14.20",
+    "delta": "-9% with smarter routing",
+    "description": "Blended cost including retrieval, model calls, and policy execution."
+  },
+  {
+    "id": "cache",
+    "label": "Cache hit ratio",
+    "value": "41%",
+    "delta": "+8 points on repetitive intents",
+    "description": "Requests resolved partly through cached retrieval or answer artifacts."
+  },
+  {
+    "id": "fallback",
+    "label": "Model fallback events",
+    "value": "0.8%",
+    "delta": "Within policy target",
+    "description": "Requests rerouted to a fallback model because of cost, latency, or resilience triggers."
+  }
+]

@@ -1,0 +1,173 @@
+[
+  {
+    "id": "channels",
+    "title": "Channels",
+    "subtitle": "App, web, contact center, employee copilot",
+    "whatItDoes": "Receives the user's request across customer, advisor, and employee touchpoints while preserving a consistent interaction model.",
+    "whyItMatters": "The same trusted answer experience should work whether the request starts in a mobile app, service portal, or assisted channel.",
+    "howItScales": "Channel adapters normalize requests so the platform can serve millions of sessions without building separate AI stacks for every surface.",
+    "architectFocus": "Design shared identity, session handoff, and accessibility patterns across channels.",
+    "controls": [
+      {
+        "label": "Session continuity",
+        "hint": "Carry context between digital self-service and human-assisted journeys."
+      },
+      {
+        "label": "Accessibility",
+        "hint": "Support keyboard, voice, and clear answer presentation from the first release."
+      }
+    ]
+  },
+  {
+    "id": "experience",
+    "title": "Experience layer",
+    "subtitle": "Chat UI, voice input, prompt suggestions",
+    "whatItDoes": "Shapes the answer engine experience through prompts, voice and text input, trust signals, and concise response presentation.",
+    "whyItMatters": "Users judge the AI by how quickly it feels helpful and trustworthy, not by the elegance of the backend.",
+    "howItScales": "A shared experience layer lets teams evolve prompts, answer layouts, and trust patterns without rewriting platform logic.",
+    "architectFocus": "Define interaction standards that make citations, controls, and follow-up discovery feel native.",
+    "controls": [
+      {
+        "label": "Prompt UX",
+        "hint": "Curate suggested prompts so the assistant feels guided instead of open-ended."
+      },
+      {
+        "label": "Trust surfaces",
+        "hint": "Expose sources and confidence without overwhelming the customer."
+      }
+    ]
+  },
+  {
+    "id": "orchestration",
+    "title": "AI orchestration layer",
+    "subtitle": "Prompt routing, session memory, tool execution",
+    "whatItDoes": "Routes requests to the right answer path, maintains useful context, and coordinates retrieval, tools, and answer synthesis.",
+    "whyItMatters": "This is where a basic chat interface becomes an enterprise answer engine with structured decision logic.",
+    "howItScales": "Orchestration enables reusable answer patterns, safer tool use, and consistent behavior across many products and tenants.",
+    "architectFocus": "Design routing policies, scoped memory, and execution boundaries that balance speed with control.",
+    "controls": [
+      {
+        "label": "Intent routing",
+        "hint": "Choose between public-answer, enterprise-grounded, and escalation flows."
+      },
+      {
+        "label": "Memory scope",
+        "hint": "Persist only the context that improves the session safely."
+      }
+    ]
+  },
+  {
+    "id": "retrieval",
+    "title": "Retrieval layer",
+    "subtitle": "Search, vector retrieval, policy-aware grounding",
+    "whatItDoes": "Finds the most relevant approved information and applies permissions, freshness, and policy checks before the model uses it.",
+    "whyItMatters": "Strong retrieval is the difference between plausible language and enterprise-grade answers.",
+    "howItScales": "The retrieval layer supports multiple knowledge domains, access rules, and search strategies without changing the front-end experience.",
+    "architectFocus": "Define search quality metrics, permission models, and freshness rules for every source domain.",
+    "controls": [
+      {
+        "label": "Freshness policy",
+        "hint": "Prioritize current, approved content and block stale knowledge in sensitive flows."
+      },
+      {
+        "label": "Permission checks",
+        "hint": "Apply source-level access controls before documents reach the model."
+      }
+    ]
+  },
+  {
+    "id": "source",
+    "title": "Source layer",
+    "subtitle": "Web, knowledge base, contracts, service docs, product catalogs",
+    "whatItDoes": "Holds the public and enterprise content that the answer engine can cite and rely on.",
+    "whyItMatters": "Architects need to know which content is authoritative, how it changes, and how trustworthy answers stay current.",
+    "howItScales": "A governed source layer lets new domains be added quickly without losing provenance or compliance boundaries.",
+    "architectFocus": "Establish content ownership, ingestion pipelines, and evidence quality standards.",
+    "controls": [
+      {
+        "label": "Content ownership",
+        "hint": "Every source domain needs a named owner for quality and policy alignment."
+      },
+      {
+        "label": "Evidence quality",
+        "hint": "Track completeness, freshness, and citation usefulness over time."
+      }
+    ]
+  },
+  {
+    "id": "model-gateway",
+    "title": "Model gateway",
+    "subtitle": "Model routing, fallback logic, cost controls",
+    "whatItDoes": "Selects the right model for each request while enforcing regional, cost, and resilience policies.",
+    "whyItMatters": "Enterprise platforms need model flexibility without exposing product teams directly to every model-specific risk.",
+    "howItScales": "A gateway decouples the experience from model churn, enabling failover, experimentation, and cost-aware routing at platform level.",
+    "architectFocus": "Define routing criteria, fallback policies, and approved model envelopes by workload.",
+    "controls": [
+      {
+        "label": "Fallback policy",
+        "hint": "Choose what happens when a preferred model fails latency, cost, or policy checks."
+      },
+      {
+        "label": "Cost budget",
+        "hint": "Apply per-intent cost controls so scale does not erode business value."
+      }
+    ]
+  },
+  {
+    "id": "governance",
+    "title": "Governance layer",
+    "subtitle": "Guardrails, compliance, human approval, redaction",
+    "whatItDoes": "Applies inline controls for privacy, safety, compliance, escalation, and traceability before an answer is delivered or acted on.",
+    "whyItMatters": "Trust has to be visible in the product, but enforceable in the platform.",
+    "howItScales": "Inline governance lets organizations handle millions of requests without depending on manual review for ordinary cases.",
+    "architectFocus": "Turn policy intent into executable controls that teams can audit and evolve.",
+    "controls": [
+      {
+        "label": "Human approval",
+        "hint": "Escalate sensitive or low-confidence outcomes into reviewable workflows."
+      },
+      {
+        "label": "Redaction",
+        "hint": "Protect PII and regulated data before prompts, logs, or outputs are stored."
+      }
+    ]
+  },
+  {
+    "id": "operations",
+    "title": "Operations layer",
+    "subtitle": "Monitoring, evals, feedback, A/B testing, incident handling",
+    "whatItDoes": "Measures quality, reliability, adoption, and safety so the platform can improve continuously and recover safely when things drift.",
+    "whyItMatters": "Without operating discipline, even a good pilot will break under scale or changing user behavior.",
+    "howItScales": "Shared observability, evaluation, and rollout controls let teams ship improvements without losing confidence.",
+    "architectFocus": "Define which signals matter, how experiments are governed, and what rollback looks like.",
+    "controls": [
+      {
+        "label": "Evaluation loop",
+        "hint": "Continuously test groundedness, safety, and helpfulness against target workloads."
+      },
+      {
+        "label": "Canary release",
+        "hint": "Expose changes to controlled traffic before broad rollout."
+      }
+    ]
+  },
+  {
+    "id": "infrastructure",
+    "title": "Infrastructure layer",
+    "subtitle": "Sovereign cloud, multi-region, tenant-aware deployment",
+    "whatItDoes": "Provides the runtime, network, data, and isolation foundations that keep the platform reliable and regionally compliant.",
+    "whyItMatters": "This is where enterprise requirements such as sovereignty, resilience, and tenant isolation become real architecture decisions.",
+    "howItScales": "Infrastructure patterns determine whether the service can absorb burst traffic, regional failover, and regulated workloads safely.",
+    "architectFocus": "Plan region strategy, workload isolation, resilience targets, and deployment automation.",
+    "controls": [
+      {
+        "label": "Tenant isolation",
+        "hint": "Keep customer data, prompts, and retrieval paths isolated across enterprise tenants."
+      },
+      {
+        "label": "Regional failover",
+        "hint": "Recover service quickly without violating residency or policy constraints."
+      }
+    ]
+  }
+]

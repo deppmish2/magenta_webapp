@@ -1,0 +1,146 @@
+[
+  {
+    "id": "src-roaming-eu-policy",
+    "title": "EU Roaming Portfolio 2026",
+    "kind": "Product portfolio",
+    "domain": "Travel Mobility Hub",
+    "url": "https://insights.magentaai.demo/portfolio/eu-roaming-2026",
+    "snippet": "Business plans keep domestic allowances across the EU, with pooled alerts before fair-use thresholds are reached.",
+    "freshness": "Updated 8 days ago"
+  },
+  {
+    "id": "src-roaming-support",
+    "title": "Business Traveler Support Matrix",
+    "kind": "Support handbook",
+    "domain": "Service Operations",
+    "url": "https://insights.magentaai.demo/support/business-traveler-matrix",
+    "snippet": "Digital-first assistance is available 24/7, with live expert escalation for connectivity incidents abroad.",
+    "freshness": "Updated 2 weeks ago"
+  },
+  {
+    "id": "src-5g-campus-brief",
+    "title": "5G Campus Networks Explained",
+    "kind": "Solution brief",
+    "domain": "Enterprise Connectivity",
+    "url": "https://insights.magentaai.demo/solutions/5g-campus-brief",
+    "snippet": "Private 5G creates a local, high-performance wireless zone for factories, logistics sites, and campuses.",
+    "freshness": "Updated this month"
+  },
+  {
+    "id": "src-5g-campus-architecture",
+    "title": "Campus Network Reference Architecture",
+    "kind": "Architecture note",
+    "domain": "Network Engineering",
+    "url": "https://insights.magentaai.demo/architecture/campus-network-reference",
+    "snippet": "Coverage, latency targets, identity controls, and device segmentation must be designed together.",
+    "freshness": "Updated 10 days ago"
+  },
+  {
+    "id": "src-support-policy",
+    "title": "Contract Support Modernization Update",
+    "kind": "Policy update",
+    "domain": "Customer Care",
+    "url": "https://insights.magentaai.demo/policy/contract-support-update",
+    "snippet": "The latest update introduces digital triage, faster severe-incident routing, and clearer response-time tiers.",
+    "freshness": "Updated 4 days ago"
+  },
+  {
+    "id": "src-support-catalog",
+    "title": "Support Tier Comparison",
+    "kind": "Service catalog",
+    "domain": "Commercial Operations",
+    "url": "https://insights.magentaai.demo/catalog/support-tiers",
+    "snippet": "Premium tiers add named service management, proactive notifications, and expanded multilingual support.",
+    "freshness": "Updated this week"
+  },
+  {
+    "id": "src-secure-assistant-pattern",
+    "title": "Secure AI Assistant Blueprint",
+    "kind": "Reference pattern",
+    "domain": "AI Architecture Office",
+    "url": "https://insights.magentaai.demo/blueprints/secure-ai-assistant",
+    "snippet": "Grounding, human escalation, policy checks, and audit logging are treated as product features, not afterthoughts.",
+    "freshness": "Updated 5 days ago"
+  },
+  {
+    "id": "src-contact-center-handoff",
+    "title": "Contact Center Handoff Controls",
+    "kind": "Operations standard",
+    "domain": "Customer Operations",
+    "url": "https://insights.magentaai.demo/operations/contact-center-handoff",
+    "snippet": "Low-confidence answers trigger live-agent routing with preserved context and policy evidence.",
+    "freshness": "Updated last week"
+  },
+  {
+    "id": "src-eu-residency-controls",
+    "title": "EU Data Residency Control Set",
+    "kind": "Compliance control set",
+    "domain": "Sovereign Cloud",
+    "url": "https://insights.magentaai.demo/compliance/eu-data-residency",
+    "snippet": "Data paths, model endpoints, logging sinks, and retrieval indexes remain inside approved EU regions.",
+    "freshness": "Updated 6 days ago"
+  },
+  {
+    "id": "src-model-gateway",
+    "title": "Model Gateway and Fallback Policy",
+    "kind": "Platform standard",
+    "domain": "AI Platform",
+    "url": "https://insights.magentaai.demo/platform/model-gateway",
+    "snippet": "Requests route through a central gateway that enforces cost, latency, and residency policies before model invocation.",
+    "freshness": "Updated 11 days ago"
+  },
+  {
+    "id": "src-public-sector-policy",
+    "title": "Public-Sector Workspace Guardrails",
+    "kind": "Governance guide",
+    "domain": "Regulated Industry Advisory",
+    "url": "https://insights.magentaai.demo/governance/public-sector-workspace",
+    "snippet": "Role-based access, document boundaries, and approval workflows are required for sensitive casework.",
+    "freshness": "Updated 3 days ago"
+  },
+  {
+    "id": "src-public-sector-audit",
+    "title": "Auditability for Employee AI Workspaces",
+    "kind": "Audit note",
+    "domain": "Risk & Assurance",
+    "url": "https://insights.magentaai.demo/audit/employee-ai-workspaces",
+    "snippet": "Action traceability must tie prompts, source access, model responses, and downstream actions together.",
+    "freshness": "Updated this month"
+  },
+  {
+    "id": "src-rollout-controls",
+    "title": "GenAI Rollout Controls at Scale",
+    "kind": "Scale playbook",
+    "domain": "Platform Operations",
+    "url": "https://insights.magentaai.demo/operations/genai-rollout-controls",
+    "snippet": "Canary routing, traffic shaping, evaluation gates, and incident rollback should be automated from the first production launch.",
+    "freshness": "Updated 9 days ago"
+  },
+  {
+    "id": "src-observability-evals",
+    "title": "Observability and Evaluation Loop",
+    "kind": "Operations guide",
+    "domain": "AI Reliability",
+    "url": "https://insights.magentaai.demo/reliability/observability-evals",
+    "snippet": "Latency, groundedness, escalation rates, and model drift must be reviewed together to drive safe iteration.",
+    "freshness": "Updated 1 week ago"
+  },
+  {
+    "id": "src-rag-patterns",
+    "title": "RAG for Enterprise Answer Systems",
+    "kind": "Architecture guide",
+    "domain": "Knowledge Platforms",
+    "url": "https://insights.magentaai.demo/architecture/rag-answer-systems",
+    "snippet": "RAG performs best when retrieval quality, source permissions, and answer synthesis are measured as one pipeline.",
+    "freshness": "Updated 12 days ago"
+  },
+  {
+    "id": "src-web-answer-comparison",
+    "title": "Direct Web Answer System Comparison",
+    "kind": "Strategy memo",
+    "domain": "Product Strategy",
+    "url": "https://insights.magentaai.demo/strategy/direct-web-answer-comparison",
+    "snippet": "Open-web answer engines accelerate discovery, while enterprise deployments require stronger policy, privacy, and traceability layers.",
+    "freshness": "Updated this month"
+  }
+]

@@ -1,0 +1,37 @@
+[
+  {
+    "stage": "Discover",
+    "clientConcern": "Where can AI create visible value without increasing risk or complexity too early?",
+    "architecturalFocus": "Prioritize use cases, trust boundaries, and measurable pilot outcomes.",
+    "deliverable": "Opportunity map and reference experience concept.",
+    "successMetric": "Executive agreement on first pilot and trust scope."
+  },
+  {
+    "stage": "Pilot",
+    "clientConcern": "Can we prove helpfulness fast while keeping the experience simple and safe?",
+    "architecturalFocus": "Scoped grounding, initial guardrails, and observable user journeys.",
+    "deliverable": "Pilot solution with selected sources, answer design, and governance baseline.",
+    "successMetric": "Adoption, satisfaction, and grounded answer quality."
+  },
+  {
+    "stage": "Govern",
+    "clientConcern": "How do we move from promising demos to reliable operating controls?",
+    "architecturalFocus": "Executable policies, escalation design, logging, and evaluation loops.",
+    "deliverable": "Governance operating model and control framework.",
+    "successMetric": "Audit readiness and reduced unmanaged AI risk."
+  },
+  {
+    "stage": "Industrialize",
+    "clientConcern": "How do multiple teams build on the platform without reinventing the stack?",
+    "architecturalFocus": "Shared orchestration, model gateway, reusable retrieval, and developer standards.",
+    "deliverable": "Scalable platform blueprint and rollout patterns.",
+    "successMetric": "Faster delivery across new AI journeys."
+  },
+  {
+    "stage": "Scale",
+    "clientConcern": "Can the organization operate AI as a trusted enterprise capability across regions and business units?",
+    "architecturalFocus": "Multi-region resilience, tenant-aware deployment, cost control, and operating cockpit design.",
+    "deliverable": "Enterprise AI platform roadmap and scale governance model.",
+    "successMetric": "Reliable, governed growth in production usage."
+  }
+]

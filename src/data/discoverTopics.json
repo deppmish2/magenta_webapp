@@ -1,0 +1,44 @@
+[
+  {
+    "id": "topic-cx",
+    "title": "AI for customer experience",
+    "description": "Grounded self-service, guided prompts, and seamless escalation in one digital journey.",
+    "promptId": "secure-ai-customer-service",
+    "tags": ["CX", "answer engine", "handoff"]
+  },
+  {
+    "id": "topic-sovereign",
+    "title": "Sovereign AI",
+    "description": "Regional control, EU residency, tenant-aware routing, and operational evidence.",
+    "promptId": "eu-residency-answer-engine",
+    "tags": ["EU", "residency", "sovereign cloud"]
+  },
+  {
+    "id": "topic-ops",
+    "title": "AI in telecom operations",
+    "description": "Reliable answers for service teams, contact centers, and operational support flows.",
+    "promptId": "genai-controls-millions",
+    "tags": ["ops", "scale", "monitoring"]
+  },
+  {
+    "id": "topic-public-sector",
+    "title": "AI for public sector",
+    "description": "Governed workspaces that improve productivity without compromising compliance.",
+    "promptId": "public-sector-workspace",
+    "tags": ["public sector", "audit", "workflow"]
+  },
+  {
+    "id": "topic-responsible",
+    "title": "Responsible AI",
+    "description": "Make trust visible through sources, guardrails, escalation, and traceability.",
+    "promptId": "genai-controls-millions",
+    "tags": ["trust", "guardrails", "evaluation"]
+  },
+  {
+    "id": "topic-employees",
+    "title": "AI copilots for employees",
+    "description": "Role-aware assistance that sits inside approved enterprise processes.",
+    "promptId": "public-sector-workspace",
+    "tags": ["employee", "copilot", "governed"]
+  }
+]

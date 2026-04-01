@@ -1,0 +1,74 @@
+[
+  {
+    "id": "roaming-business-eu",
+    "text": "What are the best roaming options for a business traveler in the EU?",
+    "mode": "consumer",
+    "category": "Travel & roaming",
+    "preview": "Compare plans, fair-use thresholds, and always-on support in one answer.",
+    "recentTopic": "EU roaming",
+    "keywords": ["roaming", "business", "traveler", "eu", "travel", "options", "plan"]
+  },
+  {
+    "id": "fiveg-campus-simple",
+    "text": "Explain 5G campus networks in simple terms.",
+    "mode": "consumer",
+    "category": "Connectivity",
+    "preview": "Translate private 5G into plain business language for non-specialists.",
+    "recentTopic": "5G campus",
+    "keywords": ["5g", "campus", "private", "network", "simple", "terms", "factory"]
+  },
+  {
+    "id": "contract-support-changes",
+    "text": "What changed in our contract support options?",
+    "mode": "consumer",
+    "category": "Support",
+    "preview": "Summarize support tiers, response times, and digital escalation changes.",
+    "recentTopic": "Support contracts",
+    "keywords": ["contract", "support", "changed", "options", "sla", "response", "tier"]
+  },
+  {
+    "id": "secure-ai-customer-service",
+    "text": "Design a secure AI assistant for telecom customer service.",
+    "mode": "enterprise",
+    "category": "Customer experience",
+    "preview": "Grounded answers, handoff design, and governance from the first release.",
+    "recentTopic": "Service assistant",
+    "keywords": ["secure", "ai", "assistant", "telecom", "customer", "service", "design"]
+  },
+  {
+    "id": "eu-residency-answer-engine",
+    "text": "How can we deploy an answer engine with EU data residency?",
+    "mode": "enterprise",
+    "category": "Sovereign AI",
+    "preview": "Blend routing, grounding, policy checks, and operational controls.",
+    "recentTopic": "EU residency",
+    "keywords": ["deploy", "answer", "engine", "eu", "data", "residency", "sovereign"]
+  },
+  {
+    "id": "public-sector-workspace",
+    "text": "How should a public-sector AI workspace balance productivity with compliance?",
+    "mode": "enterprise",
+    "category": "Public sector",
+    "preview": "Show how governed copilots can increase output without losing auditability.",
+    "recentTopic": "Gov workspace",
+    "keywords": ["public", "sector", "workspace", "compliance", "productivity", "audit"]
+  },
+  {
+    "id": "genai-controls-millions",
+    "text": "What controls are needed before rolling out GenAI to millions of users?",
+    "mode": "architect",
+    "category": "Governance",
+    "preview": "Cover guardrails, rollout, evals, latency, incidents, and tenant boundaries.",
+    "recentTopic": "Rollout controls",
+    "keywords": ["controls", "rolling", "genai", "millions", "users", "guardrails", "scale"]
+  },
+  {
+    "id": "rag-vs-direct-answer",
+    "text": "Compare retrieval-augmented generation with direct web answer systems.",
+    "mode": "architect",
+    "category": "AI architecture",
+    "preview": "Clarify when open-web synthesis helps and when policy-aware grounding is required.",
+    "recentTopic": "RAG vs answers",
+    "keywords": ["compare", "retrieval", "augmented", "generation", "direct", "web", "answers", "rag"]
+  }
+]
