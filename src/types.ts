@@ -118,3 +118,49 @@ export interface TransformationStage {
   deliverable: string;
   successMetric: string;
 }
+
+export interface ExecutiveStat {
+  label: string;
+  value: string;
+  footnote: string;
+}
+
+export interface StoryBeat {
+  title: string;
+  description: string;
+}
+
+export interface ModeTheme {
+  label: string;
+  audience: string;
+  heroBadge: string;
+  heroTitle: string;
+  heroDescription: string;
+  demoCallout: string;
+  trustHeadline: string;
+  architectureHeadline: string;
+  operationsHeadline: string;
+  policyDetail: string;
+  gatewayPolicy: string;
+  stats: ExecutiveStat[];
+  storyBeats: StoryBeat[];
+}
+
+export interface ArchitectureTraceStage {
+  id: string;
+  label: string;
+  signal: string;
+  detail: string;
+}
+
+export interface RolloutPlay {
+  title: string;
+  status: string;
+  note: string;
+}
+
+export interface RegionalStatus {
+  region: string;
+  status: string;
+  posture: string;
+}

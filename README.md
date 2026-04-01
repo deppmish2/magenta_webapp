@@ -1,122 +1,125 @@
 # MagentaAI Experience
 
-MagentaAI Experience is a premium one-page interview prototype for a Senior AI Architect Consultant role at T-Systems. It is designed to show a dual-layer story:
+MagentaAI Experience is a polished one-page interview demo for a Senior AI Architect Consultant conversation. The app is intentionally presentation-first:
 
-- a customer-facing AI experience inspired by Telekom / Magenta AI
-- the governed enterprise architecture required to deliver that experience safely at scale
+- premium dark, magenta-forward visual language
+- one immersive page instead of multiple disconnected screens
+- local mocked data only for demo reliability
+- concise executive copy
+- a mode switch that changes the story from customer UX to enterprise governance to platform architecture
 
-The result is intentionally not a generic chatbot and not only a technical dashboard. It is an answer-engine-style experience that moves from intuitive UX to trust, architecture, operations, and consulting value, while keeping the interaction simple enough to demo in one smooth flow.
+The runtime remains Vite-based, so the shipped implementation lives in `src/`. For spec alignment, there is also an `app/page.tsx` compatibility entry that mirrors the same app component.
 
-## Concept summary
+## What the app now does
 
-This prototype demonstrates how a Telekom-style AI experience can evolve across three lenses:
+The page is built around one answer engine experience with three lenses:
 
-1. Consumer mode: simple, elegant, guided answers with sources and voice/text interaction
-2. Enterprise mode: the same answer flow, now with visible trust controls, policy framing, and governance context
-3. Architect mode: the interaction expands into orchestration, retrieval, model gateway, operations, and scale controls
+1. Consumer mode shows the polished front-end story: guided prompts, voice demo UI, direct answers, citations, and follow-up suggestions.
+2. Enterprise mode keeps the same answer surface but turns up trust controls, residency, audit posture, and rollout signals.
+3. Architect mode reveals the presentable platform layer story: orchestration, retrieval, gateway policy, monitoring, and the clickable architecture explorer.
 
-The core narrative is:
+The demo is intentionally local-only and scripted. There is no dependency on an external API to make the main flow feel complete.
 
-> Simple for people. Trusted for enterprises. Ready to scale.
+## Structure
 
-## How this maps to public Magenta AI positioning
+- `src/App.tsx`: top-level page composition and global mode state
+- `src/components/StickyNav.tsx`: sticky navigation with compact mode switch
+- `src/components/ModeSwitch.tsx`: reusable consumer / enterprise / architect switch
+- `src/components/SectionWrapper.tsx`: reusable section shell for the one-page layout
+- `src/components/LiveAnswerPanel.tsx`: scripted live demo with typing animation, fake voice mode, citations, follow-ups, and architectural trace
+- `src/components/TrustControlsPanel.tsx`: trust controls and evidence cards
+- `src/components/ArchitectureLayerExplorer.tsx`: clickable architecture layer explorer
+- `src/components/OperationsCockpit.tsx`: premium operations and rollout cockpit
+- `src/components/UseCaseCards.tsx`: use-case cards
+- `src/components/TransformationJourneyTimeline.tsx`: consulting journey timeline
+- `src/data/*.json`: mocked prompts, answers, citations, controls, architecture, metrics, use cases, and transformation stages
+- `src/data/demoContent.ts`: typed helpers and mode-specific presentation content
 
-The public Magenta AI direction emphasizes a few important product ideas: AI inside an existing app journey, direct answers instead of link lists, prompt suggestions, citations, trustworthy behavior, and continuous feature evolution. This prototype mirrors those traits in a demo-friendly way:
-
-- the centerpiece is a polished answer engine rather than a blank chat box
-- the user can explore curated prompt flows instead of inventing everything from scratch
-- each answer includes sources, confidence, follow-up suggestions, and a trust explanation
-- voice and text modes share one integrated experience
-- the experience stays premium and Magenta-led while showing that trust is built in, not layered on later
-
-## Why the architecture reflects a Senior AI Architect Consultant perspective
-
-The architecture is designed to show advisory depth as well as product understanding.
-
-- It connects the visible AI experience to the platform layers behind it: channels, orchestration, retrieval, source systems, model gateway, governance, operations, and infrastructure.
-- It treats governance, privacy, auditability, and human review as first-class design concerns.
-- It includes the operating model needed for real production scale: canary rollout, traffic shaping, multi-model failover, tenant isolation, and evaluation loops.
-- It closes with a transformation journey that positions the consultant as someone who can discover value, pilot responsibly, establish controls, industrialize the platform, and scale it across the enterprise.
-
-In short, the prototype tries to answer the question: "What would it look like if this candidate had to advise the client and also design the platform that makes the experience safe and scalable?"
-
-## Tech stack
-
-- React + TypeScript + Vite
-- Tailwind CSS
-- Framer Motion
-- lucide-react
-- local Vite API middleware for server-side OpenAI calls
-- OpenAI Responses API with a GPT mini model (`gpt-5.4-mini` by default)
-- local shadcn-style UI components
-- local mocked JSON data for prompts, responses, sources, trust controls, architecture, metrics, use cases, and journey stages
-- automatic local fallback to scripted answers when no API key is set
-
-## How to run
-
-Create a local env file first:
-
-```bash
-cp .env.example .env.local
-```
-
-Then add your key to `.env.local`:
-
-```bash
-OPEN_API_KEY=your_openai_key_here
-OPENAI_MODEL=gpt-5.4-mini
-```
-
-Then start the app:
+## Run locally
 
 ```bash
 pnpm install
 pnpm dev
 ```
 
-To create a production build:
+Create a production build with:
 
 ```bash
 pnpm build
 ```
 
-## Demo structure
+## Demo walkthrough
 
-- Hero with a simpler value proposition and curated entry points
-- Live demo panel with three modes and live server-backed answers
-- Compact enterprise snapshot for trust, platform layers, and operations
-- Use cases and consulting journey in a shorter, easier-to-scan layout
-- Final executive CTA
+The page is designed to support a single smooth 10-minute walkthrough:
 
-## 10-minute presentation script
+1. Start in the hero.
+   Explain that this is a premium Magenta-style AI answer engine, not a generic chatbot, and use the large mode switch to frame the conversation.
 
-### 1. Start with the user experience inspired by Magenta AI
+2. Enter the live demo.
+   Pick one of the scripted prompts, show the voice demo pulse, submit the question, and let the typing animation land the executive summary.
 
-"I wanted to begin where a customer or digital user begins, not in the backend. The hero and feature layer show a Magenta-style answer experience: direct answers, prompt suggestions, sources, voice and text input, and a premium integrated feel."
+3. Show why the answer feels trustworthy.
+   Point to the citation cards, trust badges, concise rationale, and follow-up suggestions on the same surface.
 
-### 2. Show answer engine behavior with sources and prompts
+4. Reveal the architectural trace.
+   Click `Show architectural trace` and walk through retrieval, policy checks, orchestration, model gateway, and monitoring.
 
-"The centerpiece is the live demo panel. This is not a generic chatbot. It uses curated prompt flows and scripted answers so the experience feels like an answer engine. Each answer is concise, source-backed, and gives the user clear follow-up options."
+5. Switch to enterprise mode.
+   Show how the same answer surface changes character: more visible controls, stronger governance posture, and a cleaner rollout narrative.
 
-### 3. Switch to trust and governance
+6. Open the trust and architecture section.
+   Use the trust controls to talk about policy, privacy, escalation, and auditability. Then click through the architecture explorer live so the platform story feels clear and deliberate.
 
-"The important point is that trust is visible in the product. When I move from consumer mode to enterprise mode, the same interaction starts exposing privacy mode, policy checks, audit logging, human review escalation, and regional controls. That is how an AI experience becomes enterprise-ready."
+7. Move into the operations cockpit.
+   Highlight that this is not a raw admin dashboard. It is a presentable control room for groundedness, latency, cost, failover, canaries, and regional posture.
 
-### 4. Reveal the architecture behind the experience
+8. Close with use cases and journey.
+   Show how the same platform thinking supports customer service, employee knowledge, operations, and regulated environments. Finish on the transformation journey from discover to scale.
 
-"Next I switch to architect mode and open the layered architecture. This is where the story expands from UI into platform design: channel integration, orchestration, retrieval, governed sources, model gateway, governance, operations, and sovereign infrastructure."
+## Suggested 10-minute talk track
 
-### 5. Show scale and operations controls
+### 1. Open with the product feel
 
-"A production-grade AI platform cannot stop at architecture diagrams. It needs an operating cockpit. That is why I included latency, groundedness, escalation, fallback, cost, and rollout controls such as canaries, traffic shaping, and evaluation loops. This shows how the platform would actually be steered in production."
+"I wanted the first impression to be a believable Magenta-style answer experience, not a technical diagram. The page starts with a premium consumer-ready interaction and then reveals the operating layers underneath."
 
-### 6. Close with consulting value and transformation journey
+### 2. Demonstrate the live answer flow
 
-"Finally, I wanted to show the consultant perspective. The transformation journey explains how I would help a client move from discovery to pilot to governance to industrialization to scale. The use-case cards show how the same platform thinking can support customer service, employees, operations, and regulated environments."
+"The center of the experience is a scripted answer engine. I can choose one of several prompt flows, trigger a fake voice interaction for demo polish, and show a concise answer with sources and follow-up suggestions."
+
+### 3. Explain the mode switch
+
+"The same page transforms across three modes. Consumer mode emphasizes clarity. Enterprise mode makes governance visible. Architect mode opens up the platform logic behind the experience."
+
+### 4. Show trust directly in the product
+
+"Trust is not hidden in a slide appendix. The answer includes confidence, citations, trust badges, and a short explanation of why the response is safe to rely on."
+
+### 5. Reveal the architectural trace
+
+"When I click the architectural trace, the app explains how the answer moved through retrieval, policy checks, orchestration, the model gateway, and monitoring. That makes the enterprise platform story concrete."
+
+### 6. Click through the architecture explorer
+
+"The architecture section is intentionally presentable and clickable. Instead of showing one static diagram, I can move through the stack layer by layer and explain how each part contributes to trust, scale, and operational control."
+
+### 7. Use the operations cockpit to show production credibility
+
+"The cockpit shows the difference between a nice pilot and a real platform. I can talk about canaries, model failover, groundedness, cost, and regional posture without drowning the audience in dashboard clutter."
+
+### 8. Finish with consulting value
+
+"I close with the use cases and the transformation journey because the goal is not only to show UI taste or platform depth. It is to show how I would help a client move from opportunity discovery to governed enterprise scale."
+
+## Design intent
+
+- premium, dark, magenta-forward styling
+- stronger spacing and hierarchy than the previous prototype
+- less clutter, more narrative discipline
+- believable enterprise copy without long paragraphs
+- smooth transitions between sections
+- interview-safe reliability through local mocked data only
 
 ## Notes
 
-- With a real `OPEN_API_KEY`, the demo sends questions through the local `/api/answer` endpoint and uses the GPT mini model server-side.
-- If no key is present, the app falls back automatically to the local scripted dataset so the demo still works.
-- The frontend is framed as a Perplexity-style answer experience, but the backend integration is OpenAI-based.
-- The overall design now favors straightforward handling first, while still preserving the product, trust, and architecture story needed for the interview.
+- The existing repository still contains some earlier prototype files and server-side scaffolding, but the implemented app flow is now fully local and does not depend on those services.
+- `app/page.tsx` is present for spec alignment; the actual runtime entry for this repo remains `src/App.tsx`.

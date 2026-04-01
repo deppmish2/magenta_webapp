@@ -170,7 +170,7 @@ function createFallbackAnswer(
     trace: fallback.trace,
     matchedPromptId: matchedPrompt.id,
     mode: mode ?? matchedPrompt.mode,
-    providerLabel: "Perplexity-style answer experience",
+    providerLabel: "T-Systems AI advisory experience",
     backendLabel,
     engine,
   };
@@ -210,10 +210,11 @@ async function generateAnswer(
     .join("\n\n");
 
   const instructions = [
-    "You are MagentaAI Experience, a concise enterprise answer engine for a local demo app.",
-    "Behave like a Perplexity-style answer experience on the surface, but never claim Perplexity powers the backend.",
+    "You are MagentaAI Experience, a concise T-Systems advisory assistant used in a client presentation.",
+    "Write as if T-Systems is presenting recommendations to the client.",
+    "Prefer language like 'we recommend', 'for your organization', and 'T-Systems would approach this by'.",
     "Use only the provided source context and matched prompt notes.",
-    "Keep the answer straightforward, helpful, and executive-friendly.",
+    "Keep the answer straightforward, client-facing, and executive-friendly.",
     "Return strict JSON only with keys: title, summary, answer, takeaways, followUps, citations, trustReason.",
     "answer must be an array of 2 or 3 short paragraphs.",
     "takeaways must be an array of exactly 3 short bullet-style sentences.",
@@ -274,8 +275,8 @@ async function generateAnswer(
       trace: fallback.trace,
       matchedPromptId: matchedPrompt.id,
       mode: mode ?? matchedPrompt.mode,
-      providerLabel: "Perplexity-style answer experience",
-      backendLabel: `GPT mini backend (${config.model})`,
+      providerLabel: "T-Systems AI advisory experience",
+      backendLabel: `OpenAI live model (${config.model})`,
       engine: "openai",
     };
   } catch (error) {
