@@ -1,372 +1,206 @@
-import { createRequire } from "node:module";
-import type {
-  DemoMode,
-  LiveAnswer,
-  PromptRecord,
-  ResponseRecord,
-  SourceRecord,
-} from "../src/types";
+import promptsRaw from "../src/data/prompts.json";
+import responsesRaw from "../src/data/responses.json";
+import sourcesRaw from "../src/data/sources.json";
+import type { DemoMode, LiveAnswer, PromptRecord, ResponseRecord, SourceRecord } from "../src/types";
 
-const require = createRequire(import.meta.url);
-const prompts = require("../src/data/prompts.json") as PromptRecord[];
-const responses = require("../src/data/responses.json") as ResponseRecord[];
-const sources = require("../src/data/sources.json") as SourceRecord[];
+const prompts = promptsRaw as PromptRecord[];
+const responses = responsesRaw as ResponseRecord[];
+const sources = sourcesRaw as SourceRecord[];
 
-const promptById = Object.fromEntries(
-  prompts.map((prompt: PromptRecord) => [prompt.id, prompt]),
-) as Record<string, PromptRecord>;
-const responseByPromptId = Object.fromEntries(
-  responses.map((response: ResponseRecord) => [response.promptId, response]),
-) as Record<string, ResponseRecord>;
-const sourceById = Object.fromEntries(
-  sources.map((source: SourceRecord) => [source.id, source]),
-) as Record<string, SourceRecord>;
+const promptById = Object.fromEntries(prompts.map((p) => [p.id, p])) as Record<string, PromptRecord>;
+const responseByPromptId = Object.fromEntries(responses.map((r) => [r.promptId, r])) as Record<string, ResponseRecord>;
+const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, SourceRecord>;
 
-function cleanEnvValue(value: string | undefined) {
-  return (value ?? "").trim().replace(/^["']|["']$/g, "");
+function cleanEnvValue(v: string | undefined) {
+  return (v ?? "").trim().replace(/^["']|["']$/g, "");
 }
 
-function firstUsableEnv(...values: Array<string | undefined>) {
-  return values
-    .map((value) => cleanEnvValue(value))
-    .find((value) => value && !value.startsWith("replace-with")) ?? "";
+function getApiKey() {
+  return cleanEnvValue(process.env.OPENAI_API_KEY) || cleanEnvValue(process.env.OPEN_API_KEY) || "";
 }
 
-function getConfig() {
-  return {
-    apiKey: firstUsableEnv(process.env.OPENAI_API_KEY, process.env.OPEN_API_KEY),
-    model: firstUsableEnv(process.env.OPENAI_MODEL) || "gpt-4o-mini",
-  };
+function getModel() {
+  return cleanEnvValue(process.env.OPENAI_MODEL) || "gpt-4o-mini";
 }
 
 function tokenize(text: string) {
   return text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
 }
 
-function findBestPrompt(query: string, preferredMode?: DemoMode) {
-  const normalizedQuery = query.toLowerCase();
+function findBestPrompt(query: string, mode?: DemoMode): PromptRecord {
+  const q = query.toLowerCase();
   const tokens = tokenize(query);
-
-  const ranked = prompts.map((prompt: PromptRecord) => {
+  const ranked = prompts.map((p) => {
     let score = 0;
-
-    if (preferredMode && prompt.mode === preferredMode) {
-      score += 3;
+    if (mode && p.mode === mode) score += 3;
+    if (q.includes(p.text.toLowerCase())) score += 10;
+    for (const t of tokens) {
+      if (p.keywords.some((k) => k.includes(t))) score += 4;
+      if (p.text.toLowerCase().includes(t) || p.preview.toLowerCase().includes(t) || p.category.toLowerCase().includes(t)) score += 2;
     }
-
-    if (normalizedQuery.includes(prompt.text.toLowerCase())) {
-      score += 10;
-    }
-
-    for (const token of tokens) {
-      if (prompt.keywords.some((keyword: string) => keyword.includes(token))) {
-        score += 4;
-      }
-
-      if (
-        prompt.text.toLowerCase().includes(token) ||
-        prompt.preview.toLowerCase().includes(token) ||
-        prompt.category.toLowerCase().includes(token)
-      ) {
-        score += 2;
-      }
-    }
-
-    return { prompt, score };
+    return { p, score };
   });
-
-  const bestMatch = ranked.sort(
-    (left: { score: number }, right: { score: number }) => right.score - left.score,
-  )[0];
-  return bestMatch?.score > 0
-    ? bestMatch.prompt
-    : prompts.find((prompt: PromptRecord) => prompt.mode === preferredMode) ?? prompts[0];
+  const best = ranked.sort((a, b) => b.score - a.score)[0];
+  return best?.score > 0 ? best.p : (prompts.find((p) => p.mode === mode) ?? prompts[0]);
 }
 
-function selectSources(query: string, fallback: ResponseRecord) {
+function selectSources(query: string, fallback: ResponseRecord): SourceRecord[] {
   const tokens = tokenize(query);
   const ranked = sources
-    .map((source: SourceRecord) => {
-      let score = fallback.sources.includes(source.id) ? 8 : 0;
-
-      for (const token of tokens) {
-        if (
-          source.title.toLowerCase().includes(token) ||
-          source.domain.toLowerCase().includes(token)
-        ) {
-          score += 4;
-        }
-
-        if (
-          source.snippet.toLowerCase().includes(token) ||
-          source.kind.toLowerCase().includes(token)
-        ) {
-          score += 2;
-        }
+    .map((s) => {
+      let score = fallback.sources.includes(s.id) ? 8 : 0;
+      for (const t of tokens) {
+        if (s.title.toLowerCase().includes(t) || s.domain.toLowerCase().includes(t)) score += 4;
+        if (s.snippet.toLowerCase().includes(t) || s.kind.toLowerCase().includes(t)) score += 2;
       }
-
-      return { source, score };
+      return { s, score };
     })
-    .sort(
-      (left: { score: number }, right: { score: number }) => right.score - left.score,
-    )
+    .sort((a, b) => b.score - a.score)
     .slice(0, 4)
-    .map((entry: { source: SourceRecord }) => entry.source);
-
-  const orderedIds = [...fallback.sources, ...ranked.map((source) => source.id)];
-  const uniqueIds = [...new Set(orderedIds)].slice(0, 4);
-
-  return uniqueIds
-    .map((sourceId: string) => sourceById[sourceId])
-    .filter(Boolean) as SourceRecord[];
+    .map((e) => e.s);
+  const ids = [...new Set([...fallback.sources, ...ranked.map((s) => s.id)])].slice(0, 4);
+  return ids.map((id) => sourceById[id]).filter(Boolean) as SourceRecord[];
 }
 
-function cleanStringList(value: unknown, limit: number, fallback: string[]) {
-  if (!Array.isArray(value)) {
-    return fallback.slice(0, limit);
-  }
-
-  const cleaned = value
-    .map((item) => (typeof item === "string" ? item.trim() : ""))
-    .filter(Boolean)
-    .slice(0, limit);
-
-  return cleaned.length > 0 ? cleaned : fallback.slice(0, limit);
+function cleanList(value: unknown, limit: number, fb: string[]): string[] {
+  if (!Array.isArray(value)) return fb.slice(0, limit);
+  const cleaned = value.map((i) => (typeof i === "string" ? i.trim() : "")).filter(Boolean).slice(0, limit);
+  return cleaned.length > 0 ? cleaned : fb.slice(0, limit);
 }
 
-function extractStructuredAnswer(text: string) {
-  const cleaned = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
-  const start = cleaned.indexOf("{");
-  const end = cleaned.lastIndexOf("}");
+function parseJson(text: string) {
+  const c = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+  const s = c.indexOf("{"), e = c.lastIndexOf("}");
+  if (s === -1 || e <= s) return null;
+  try { return JSON.parse(c.slice(s, e + 1)) as Record<string, unknown>; } catch { return null; }
+}
 
-  if (start === -1 || end === -1 || end <= start) {
-    return null;
+function fallbackAnswer(
+  mode: DemoMode | undefined,
+  prompt: PromptRecord,
+  fb: ResponseRecord,
+  srcs: SourceRecord[],
+  label: string,
+): LiveAnswer {
+  return {
+    title: fb.title, summary: fb.executiveSummary, answer: fb.detailedAnswer,
+    takeaways: fb.takeaways, followUps: fb.followUps, sources: srcs,
+    trustBadges: fb.trustBadges, confidence: fb.confidence, trustReason: fb.trustReason,
+    trace: fb.trace, matchedPromptId: prompt.id, mode: mode ?? prompt.mode,
+    providerLabel: "T-Systems AI advisory experience", backendLabel: label, engine: "fallback",
+  };
+}
+
+function corsHeaders() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+export async function OPTIONS() {
+  return new Response(null, { status: 204, headers: corsHeaders() });
+}
+
+export async function POST(request: Request): Promise<Response> {
+  const apiKey = getApiKey();
+  const model = getModel();
+
+  let query = promptById["roaming-business-eu"].text;
+  let mode: DemoMode | undefined;
+
+  try {
+    const body = await request.json() as { query?: string; mode?: DemoMode };
+    if (body.query?.trim()) query = body.query.trim();
+    mode = body.mode;
+  } catch { /* use defaults */ }
+
+  const prompt = findBestPrompt(query, mode);
+  const fb = responseByPromptId[prompt.id] ?? responses[0];
+  const srcs = selectSources(query, fb);
+
+  if (!apiKey) {
+    return new Response(
+      JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, "No API key — set OPENAI_API_KEY in Vercel")),
+      { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Key-Set": "no" } },
+    );
   }
 
   try {
-    return JSON.parse(cleaned.slice(start, end + 1));
-  } catch {
-    return null;
-  }
-}
+    const sourceContext = srcs
+      .map((s) => `[${s.id}] ${s.title}\nType: ${s.kind}\nDomain: ${s.domain}\nFreshness: ${s.freshness}\nSnippet: ${s.snippet}`)
+      .join("\n\n");
 
-function createFallbackAnswer(
-  query: string,
-  mode: DemoMode | undefined,
-  matchedPrompt: PromptRecord,
-  fallback: ResponseRecord,
-  selectedSources: SourceRecord[],
-  backendLabel: string,
-): LiveAnswer {
-  return {
-    title: fallback.title,
-    summary: fallback.executiveSummary,
-    answer: fallback.detailedAnswer,
-    takeaways: fallback.takeaways,
-    followUps: fallback.followUps,
-    sources: selectedSources,
-    trustBadges: fallback.trustBadges,
-    confidence: fallback.confidence,
-    trustReason: fallback.trustReason,
-    trace: fallback.trace,
-    matchedPromptId: matchedPrompt.id,
-    mode: mode ?? matchedPrompt.mode,
-    providerLabel: "T-Systems AI advisory experience",
-    backendLabel,
-    engine: "fallback",
-  };
-}
+    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model, temperature: 0.3, max_tokens: 800,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are MagentAI Experience, a concise T-Systems advisory assistant. " +
+              "Write as T-Systems presenting to a client. Use 'we recommend' and 'T-Systems would approach this by'. " +
+              "Reply with strict JSON only — no markdown, no prose outside JSON. " +
+              "Keys: title (string), summary (1 sentence string), answer (array of 2 short paragraphs), " +
+              "takeaways (array of 3 bullet sentences), followUps (array of 3 questions), " +
+              "citations (array of source IDs from provided sources only), trustReason (string).",
+          },
+          { role: "user", content: `Question: ${query}\nMode: ${mode ?? prompt.mode}\nSources:\n${sourceContext}` },
+        ],
+      }),
+    });
 
-function json(payload: unknown, init: ResponseInit = {}) {
-  return new Response(JSON.stringify(payload), {
-    ...init,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Cache-Control": "no-store",
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-      ...(init.headers ? Object.fromEntries(new Headers(init.headers).entries()) : {}),
-    },
-  });
-}
+    const data = await res.json() as { choices?: Array<{ message?: { content?: string } }>; error?: { message?: string } };
 
-async function generateAnswer(
-  { query, mode }: { query?: string; mode?: DemoMode },
-  config: { apiKey: string; model: string },
-): Promise<LiveAnswer> {
-  const safeQuery = query?.trim() || promptById["roaming-business-eu"].text;
-  const matchedPrompt = findBestPrompt(safeQuery, mode);
-  const fallback = responseByPromptId[matchedPrompt.id] ?? responses[0];
-  const selectedSources = selectSources(safeQuery, fallback);
-
-  if (!config.apiKey) {
-    return createFallbackAnswer(
-      safeQuery,
-      mode,
-      matchedPrompt,
-      fallback,
-      selectedSources,
-      "No OpenAI key available on Vercel",
-    );
-  }
-
-  const sourceContext = selectedSources
-    .map(
-      (source) =>
-        `[${source.id}] ${source.title}\nType: ${source.kind}\nDomain: ${source.domain}\nFreshness: ${source.freshness}\nSnippet: ${source.snippet}`,
-    )
-    .join("\n\n");
-
-  const systemPrompt =
-    "You are MagentAI Experience, a concise T-Systems advisory assistant. " +
-    "Write as T-Systems presenting to a client. Use 'we recommend' and 'T-Systems would approach this by'. " +
-    "Reply with strict JSON only. " +
-    "Keys: title, summary, answer, takeaways, followUps, citations, trustReason. " +
-    "answer must be an array of 2 short paragraphs. " +
-    "takeaways must be an array of 3 short sentences. " +
-    "followUps must be an array of 3 short questions. " +
-    "citations must contain only provided source IDs.";
-
-  const openAiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${config.apiKey}`,
-    },
-    body: JSON.stringify({
-      model: config.model,
-      temperature: 0.3,
-      max_tokens: 800,
-      messages: [
-        { role: "system", content: systemPrompt },
-        {
-          role: "user",
-          content:
-            `Question: ${safeQuery}\n` +
-            `Mode: ${mode ?? matchedPrompt.mode}\n` +
-            `Matched prompt: ${matchedPrompt.text}\n` +
-            `Sources:\n${sourceContext}`,
-        },
-      ],
-    }),
-  });
-
-  const openAiPayload = await openAiResponse.json().catch(() => ({}));
-
-  if (!openAiResponse.ok) {
-    const errorMessage =
-      openAiPayload?.error?.message ||
-      `OpenAI request failed with ${openAiResponse.status}`;
-
-    throw new Error(errorMessage);
-  }
-
-  const parsed = extractStructuredAnswer(
-    openAiPayload?.choices?.[0]?.message?.content ?? "",
-  );
-
-  if (!parsed) {
-    return createFallbackAnswer(
-      safeQuery,
-      mode,
-      matchedPrompt,
-      fallback,
-      selectedSources,
-      `OpenAI response could not be parsed (${config.model})`,
-    );
-  }
-
-  const citedIds = cleanStringList(
-    parsed.citations,
-    4,
-    selectedSources.map((source) => source.id),
-  );
-  const citedSources = citedIds
-    .map((sourceId: string) => sourceById[sourceId])
-    .filter(Boolean) as SourceRecord[];
-
-  return {
-    title: parsed.title?.trim() || fallback.title,
-    summary: parsed.summary?.trim() || fallback.executiveSummary,
-    answer: cleanStringList(parsed.answer, 3, fallback.detailedAnswer),
-    takeaways: cleanStringList(parsed.takeaways, 3, fallback.takeaways),
-    followUps: cleanStringList(parsed.followUps, 3, fallback.followUps),
-    sources: citedSources.length > 0 ? citedSources : selectedSources,
-    trustBadges: fallback.trustBadges,
-    confidence: fallback.confidence,
-    trustReason: parsed.trustReason?.trim() || fallback.trustReason,
-    trace: fallback.trace,
-    matchedPromptId: matchedPrompt.id,
-    mode: mode ?? matchedPrompt.mode,
-    providerLabel: "T-Systems AI advisory experience",
-    backendLabel: `OpenAI live model (${config.model})`,
-    engine: "openai",
-  };
-}
-
-export default {
-  async fetch(request: Request) {
-    const config = getConfig();
-
-    if (request.method === "OPTIONS") {
-      return new Response(null, {
-        status: 204,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type",
-          "Cache-Control": "no-store",
-        },
-      });
-    }
-
-    if (request.method === "GET") {
-      return json({
-        ok: true,
-        route: "/api/answer",
-        keySet: Boolean(config.apiKey),
-        model: config.model || null,
-      });
-    }
-
-    if (request.method !== "POST") {
-      return json({ error: "Method not allowed" }, { status: 405 });
-    }
-
-    try {
-      const body = await request.json().catch(() => ({}));
-      const answer = await generateAnswer(
-        {
-          query: body?.query ?? "",
-          mode: body?.mode,
-        },
-        config,
-      );
-
-      return json(answer, {
-        status: 200,
-        headers: {
-          "X-Magenta-Engine": answer.engine ?? "unknown",
-          "X-Magenta-Key-Set": config.apiKey ? "yes" : "no",
-          "X-Magenta-Model": config.model || "unset",
-        },
-      });
-    } catch (error) {
-      console.error("[magenta] error:", error);
-
-      const message =
-        error instanceof Error ? error.message : "Unknown server error";
-
-      return json(
-        {
-          error: "Internal server error",
-          detail: message,
-          keySet: Boolean(config.apiKey),
-          model: config.model || null,
-        },
-        { status: 500 },
+    if (!res.ok) {
+      const msg = data?.error?.message ?? `OpenAI ${res.status}`;
+      return new Response(
+        JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, `API error: ${msg.slice(0, 100)}`)),
+        { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Key-Set": "yes", "X-Magenta-Error": msg } },
       );
     }
-  },
-};
+
+    const parsed = parseJson(data?.choices?.[0]?.message?.content ?? "");
+    if (!parsed) {
+      return new Response(
+        JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, `Unparseable response (${model})`)),
+        { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Key-Set": "yes" } },
+      );
+    }
+
+    const citedIds = cleanList(parsed.citations, 4, srcs.map((s) => s.id));
+    const citedSrcs = citedIds.map((id) => sourceById[id]).filter(Boolean) as SourceRecord[];
+
+    const answer: LiveAnswer = {
+      title: (parsed.title as string)?.trim() || fb.title,
+      summary: (parsed.summary as string)?.trim() || fb.executiveSummary,
+      answer: cleanList(parsed.answer, 3, fb.detailedAnswer),
+      takeaways: cleanList(parsed.takeaways, 3, fb.takeaways),
+      followUps: cleanList(parsed.followUps, 3, fb.followUps),
+      sources: citedSrcs.length > 0 ? citedSrcs : srcs,
+      trustBadges: fb.trustBadges,
+      confidence: fb.confidence,
+      trustReason: (parsed.trustReason as string)?.trim() || fb.trustReason,
+      trace: fb.trace,
+      matchedPromptId: prompt.id,
+      mode: mode ?? prompt.mode,
+      providerLabel: "T-Systems AI advisory experience",
+      backendLabel: `OpenAI live model (${model})`,
+      engine: "openai",
+    };
+
+    return new Response(JSON.stringify(answer), {
+      status: 200,
+      headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Engine": "openai", "X-Magenta-Key-Set": "yes" },
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return new Response(
+      JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, `Fetch error: ${msg.slice(0, 100)}`)),
+      { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Error": msg } },
+    );
+  }
+}
