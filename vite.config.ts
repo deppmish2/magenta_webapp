@@ -1,7 +1,7 @@
 import type { Connect } from "vite";
 import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
-import { createAnswerHandler } from "./server/answerEngine";
+import { createAnswerHandler } from "./server/answerEngine.ts";
 
 function firstUsableValue(...values: Array<string | undefined>) {
   return (

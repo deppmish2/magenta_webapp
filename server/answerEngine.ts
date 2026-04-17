@@ -1,8 +1,6 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { createRequire } from "node:module";
 import OpenAI from "openai";
-import promptsData from "../src/data/prompts.json";
-import responsesData from "../src/data/responses.json";
-import sourcesData from "../src/data/sources.json";
 import type {
   DemoMode,
   LiveAnswer,
@@ -11,9 +9,10 @@ import type {
   SourceRecord,
 } from "../src/types";
 
-const prompts = promptsData as PromptRecord[];
-const responses = responsesData as ResponseRecord[];
-const sources = sourcesData as SourceRecord[];
+const require = createRequire(import.meta.url);
+const prompts = require("../src/data/prompts.json") as PromptRecord[];
+const responses = require("../src/data/responses.json") as ResponseRecord[];
+const sources = require("../src/data/sources.json") as SourceRecord[];
 
 const promptById = Object.fromEntries(prompts.map((prompt) => [prompt.id, prompt]));
 const responseByPromptId = Object.fromEntries(
