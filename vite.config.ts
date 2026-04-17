@@ -21,7 +21,7 @@ export default defineConfig(({ mode }) => {
       env.OPEN_API_KEY,
       env.OPENAI_API_KEY,
     ),
-    model: env.OPENAI_MODEL || process.env.OPENAI_MODEL || "gpt-5.4-mini",
+    model: env.OPENAI_MODEL || process.env.OPENAI_MODEL || "gpt-4o-mini",
   });
 
   const apiPlugin = {

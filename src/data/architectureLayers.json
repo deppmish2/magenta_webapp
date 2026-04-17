@@ -133,6 +133,33 @@
     ]
   },
   {
+    "id": "security",
+    "title": "Security layer",
+    "subtitle": "Zero-trust, IAM, encryption, threat detection, API security",
+    "whatItDoes": "Enforces identity-based access control, encrypts data in transit and at rest, monitors for threats, and secures every API boundary — from the channel surface to the model gateway.",
+    "whyItMatters": "Enterprise AI systems handle sensitive data and high-value decisions. A dedicated security layer ensures that breaches, misuse, and lateral movement are caught and contained before they reach the model or data layers.",
+    "howItScales": "Zero-trust principles mean every request is verified regardless of origin. Security controls are enforced at the platform level so individual teams do not need to solve IAM, encryption, or threat detection independently.",
+    "architectFocus": "Define trust boundaries, secret rotation policies, audit log retention, and incident response runbooks for the AI platform specifically.",
+    "controls": [
+      {
+        "label": "Zero-trust network",
+        "hint": "Verify every service-to-service call explicitly — no implicit trust based on network position."
+      },
+      {
+        "label": "Secret management",
+        "hint": "Rotate API keys, model credentials, and database secrets automatically without manual exposure."
+      },
+      {
+        "label": "Threat detection",
+        "hint": "Monitor for prompt exfiltration, anomalous query patterns, and lateral movement across the AI pipeline."
+      },
+      {
+        "label": "Encryption at rest",
+        "hint": "Encrypt all stored embeddings, documents, and logs with tenant-scoped keys."
+      }
+    ]
+  },
+  {
     "id": "operations",
     "title": "Operations layer",
     "subtitle": "Monitoring, evals, feedback, A/B testing, incident handling",

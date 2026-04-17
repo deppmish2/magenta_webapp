@@ -5,7 +5,7 @@ interface SectionWrapperProps {
   id: string;
   eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
   children: ReactNode;
   aside?: ReactNode;
   className?: string;
@@ -41,9 +41,11 @@ export function SectionWrapper({
               <h2 className="font-display text-3xl text-white sm:text-4xl lg:text-[2.65rem]">
                 {title}
               </h2>
-              <p className="max-w-2xl text-base leading-7 text-white/68 sm:text-lg">
-                {description}
-              </p>
+              {description ? (
+                <p className="max-w-2xl text-base leading-7 text-white/68 sm:text-lg">
+                  {description}
+                </p>
+              ) : null}
             </div>
           </div>
           {aside ? <div className="max-w-md">{aside}</div> : null}

@@ -233,9 +233,12 @@ export const modeHighlightClasses: Record<DemoMode, string> = {
 
 export const navigationItems = [
   { id: "overview", label: "Overview" },
+  { id: "values", label: "Values" },
+  { id: "vision", label: "Vision" },
+  { id: "portfolio", label: "Portfolio" },
   { id: "demo", label: "Live Demo" },
-  { id: "trust-architecture", label: "Trust + Architecture" },
-  { id: "operations", label: "Cockpit" },
+  { id: "trust-architecture", label: "Trust" },
+  { id: "operations", label: "Scale" },
   { id: "journey", label: "Journey" },
 ];
 

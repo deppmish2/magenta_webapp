@@ -209,38 +209,31 @@ async function generateAnswer(
     )
     .join("\n\n");
 
-  const instructions = [
-    "You are MagentaAI Experience, a concise T-Systems advisory assistant used in a client presentation.",
-    "Write as if T-Systems is presenting recommendations to the client.",
-    "Prefer language like 'we recommend', 'for your organization', and 'T-Systems would approach this by'.",
-    "Use only the provided source context and matched prompt notes.",
-    "Keep the answer straightforward, client-facing, and executive-friendly.",
-    "Return strict JSON only with keys: title, summary, answer, takeaways, followUps, citations, trustReason.",
-    "answer must be an array of 2 or 3 short paragraphs.",
-    "takeaways must be an array of exactly 3 short bullet-style sentences.",
-    "followUps must be an array of exactly 3 useful follow-up questions.",
-    "citations must be an array of source IDs taken only from the provided sources.",
-  ].join(" ");
+  const systemPrompt =
+    "You are MagentAI Experience, a concise T-Systems advisory assistant. " +
+    "Write as T-Systems presenting to a client. Use 'we recommend' and 'T-Systems would approach this by'. " +
+    "Reply with strict JSON only — no markdown, no prose outside JSON. " +
+    "Keys: title (string), summary (string, 1 sentence), answer (array of 2 short paragraphs), " +
+    "takeaways (array of 3 bullet sentences), followUps (array of 3 questions), " +
+    "citations (array of source IDs from provided sources), trustReason (string).";
 
-  const input = [
-    `User question: ${query}`,
-    `Requested mode: ${mode ?? matchedPrompt.mode}`,
-    `Matched prompt: ${matchedPrompt.text}`,
-    `Matched prompt preview: ${matchedPrompt.preview}`,
-    `Reference answer summary: ${fallback.executiveSummary}`,
-    `Reference answer details: ${fallback.detailedAnswer.join(" ")}`,
-    `Reference trust reason: ${fallback.trustReason}`,
-    `Available sources:\n${sourceContext}`,
-  ].join("\n\n");
+  const userMessage =
+    `Question: ${query}\n` +
+    `Mode: ${mode ?? matchedPrompt.mode}\n` +
+    `Sources:\n${sourceContext}`;
 
   try {
-    const response = await client.responses.create({
+    const response = await client.chat.completions.create({
       model: config.model,
-      instructions,
-      input,
+      temperature: 0.3,
+      max_tokens: 800,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userMessage },
+      ],
     });
 
-    const parsed = extractStructuredAnswer(response.output_text ?? "");
+    const parsed = extractStructuredAnswer(response.choices[0]?.message?.content ?? "");
     if (!parsed) {
       return createFallbackAnswer(
         query,
