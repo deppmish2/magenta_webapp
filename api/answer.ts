@@ -7,16 +7,18 @@ function cleanEnvValue(value: string | undefined): string {
   return (value ?? "").trim().replace(/^["']|["']$/g, "");
 }
 
-const config: AnswerEngineConfig = {
-  apiKey: cleanEnvValue(process.env.OPENAI_API_KEY),
-  model: cleanEnvValue(process.env.OPENAI_MODEL) || "gpt-4o-mini",
-};
+function firstUsableEnv(...values: Array<string | undefined>) {
+  return values
+    .map((value) => cleanEnvValue(value))
+    .find((value) => value && !value.startsWith("replace-with")) ?? "";
+}
 
-console.log(
-  config.apiKey
-    ? `[magenta] ready · model: ${config.model} · key: ${config.apiKey.slice(0, 12)}...`
-    : "[magenta] OPENAI_API_KEY not set — scripted fallback active",
-);
+function getConfig(): AnswerEngineConfig {
+  return {
+    apiKey: firstUsableEnv(process.env.OPENAI_API_KEY, process.env.OPEN_API_KEY),
+    model: firstUsableEnv(process.env.OPENAI_MODEL) || "gpt-4o-mini",
+  };
+}
 
 async function readBody(req: IncomingMessage): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -28,6 +30,8 @@ async function readBody(req: IncomingMessage): Promise<string> {
 }
 
 export default async function handler(req: IncomingMessage, res: ServerResponse) {
+  const config = getConfig();
+
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -61,6 +65,11 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     }
 
     console.log(`[magenta] query="${query}" mode=${mode ?? "unset"}`);
+    console.log(
+      config.apiKey
+        ? `[magenta] config ready · model=${config.model} · keySet=yes`
+        : "[magenta] OPENAI_API_KEY / OPEN_API_KEY missing · scripted fallback active",
+    );
 
     const answer = await generateAnswer({ query, mode }, config);
 
@@ -68,6 +77,7 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
     res.setHeader("Content-Type", "application/json; charset=utf-8");
     res.setHeader("X-Magenta-Engine", answer.engine ?? "unknown");
     res.setHeader("X-Magenta-Key-Set", config.apiKey ? "yes" : "no");
+    res.setHeader("X-Magenta-Model", config.model || "unset");
     res.end(JSON.stringify(answer));
   } catch (err) {
     console.error("[magenta] error:", err);
