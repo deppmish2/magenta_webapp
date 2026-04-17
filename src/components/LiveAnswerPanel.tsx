@@ -105,7 +105,7 @@ export function LiveAnswerPanel({ promptId, onPromptChange }: LiveAnswerPanelPro
       const payload = (await res.json()) as LiveAnswer;
       setAnswer(payload);
       if (payload.matchedPromptId !== promptId) onPromptChange(payload.matchedPromptId);
-      setStatusMessage(payload.engine === "openai" ? "Live · OpenAI" : "Scripted fallback");
+      setStatusMessage(payload.engine === "openai" ? "Live · OpenAI" : (payload.backendLabel ?? "Scripted fallback"));
     } catch {
       setAnswer(fallback);
       if (fallback.matchedPromptId !== promptId) onPromptChange(fallback.matchedPromptId);
@@ -333,9 +333,9 @@ export function LiveAnswerPanel({ promptId, onPromptChange }: LiveAnswerPanelPro
                       <button
                         type="button"
                         onClick={() => setShowTrace((v) => !v)}
-                        className="text-xs text-white/40 transition-colors hover:text-white/70"
+                        className="rounded-full border border-magenta-500/50 bg-magenta-500/10 px-3 py-1 text-xs font-bold text-magenta-400 transition-colors hover:bg-magenta-500/20 hover:text-magenta-300"
                       >
-                        {showTrace ? "Hide trace" : "Show trace"}
+                        {showTrace ? "Hide trace ↑" : "Show trace ↓"}
                       </button>
                     </div>
                     <p className="mt-2 text-sm leading-6 text-white/62">{answer.trustReason}</p>

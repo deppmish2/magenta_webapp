@@ -273,7 +273,8 @@ export async function generateAnswer(
       engine: "openai",
     };
   } catch (error) {
-    console.error("[magenta-answer-engine]", error);
+    const msg = error instanceof Error ? error.message : String(error);
+    console.error("[magenta-answer-engine]", msg);
 
     return createFallbackAnswer(
       query,
@@ -281,7 +282,7 @@ export async function generateAnswer(
       matchedPrompt,
       fallback,
       selectedSources,
-      "Local fallback after API error",
+      `API error: ${msg.slice(0, 120)}`,
       "fallback",
     );
   }
