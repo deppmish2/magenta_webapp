@@ -1,206 +1,495 @@
-import promptsRaw from "../src/data/prompts.json";
-import responsesRaw from "../src/data/responses.json";
-import sourcesRaw from "../src/data/sources.json";
-import type { DemoMode, LiveAnswer, PromptRecord, ResponseRecord, SourceRecord } from "../src/types";
+import { readFileSync } from "node:fs";
+import type { IncomingMessage, ServerResponse } from "node:http";
+import path from "node:path";
+import type {
+  DemoMode,
+  LiveAnswer,
+  PromptRecord,
+  ResponseRecord,
+  SourceRecord,
+} from "../src/types";
 
-const prompts = promptsRaw as PromptRecord[];
-const responses = responsesRaw as ResponseRecord[];
-const sources = sourcesRaw as SourceRecord[];
-
-const promptById = Object.fromEntries(prompts.map((p) => [p.id, p])) as Record<string, PromptRecord>;
-const responseByPromptId = Object.fromEntries(responses.map((r) => [r.promptId, r])) as Record<string, ResponseRecord>;
-const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, SourceRecord>;
-
-function cleanEnvValue(v: string | undefined) {
-  return (v ?? "").trim().replace(/^["']|["']$/g, "");
+interface LoadedData {
+  prompts: PromptRecord[];
+  responses: ResponseRecord[];
+  sources: SourceRecord[];
+  promptById: Record<string, PromptRecord>;
+  responseByPromptId: Record<string, ResponseRecord>;
+  sourceById: Record<string, SourceRecord>;
 }
 
-function getApiKey() {
-  return cleanEnvValue(process.env.OPENAI_API_KEY) || cleanEnvValue(process.env.OPEN_API_KEY) || "";
+interface AnswerRequestBody {
+  query?: string;
+  mode?: DemoMode;
 }
 
-function getModel() {
-  return cleanEnvValue(process.env.OPENAI_MODEL) || "gpt-4o-mini";
+interface StructuredAnswer {
+  title?: string;
+  summary?: string;
+  answer?: string[];
+  takeaways?: string[];
+  followUps?: string[];
+  citations?: string[];
+  trustReason?: string;
+}
+
+interface ResponseShape {
+  status: number;
+  payload: unknown;
+  headers?: Record<string, string>;
+}
+
+let cachedData: LoadedData | null = null;
+
+function cleanEnvValue(value: string | undefined) {
+  return (value ?? "").trim().replace(/^["']|["']$/g, "");
+}
+
+function firstUsableEnv(...values: Array<string | undefined>) {
+  return (
+    values
+      .map((value) => cleanEnvValue(value))
+      .find((value) => value && !value.startsWith("replace-with")) ?? ""
+  );
+}
+
+function getConfig() {
+  return {
+    apiKey: firstUsableEnv(process.env.OPENAI_API_KEY, process.env.OPEN_API_KEY),
+    model: firstUsableEnv(process.env.OPENAI_MODEL) || "gpt-4o-mini",
+  };
+}
+
+function readJsonFile<T>(relativePath: string): T {
+  const absolutePath = path.join(process.cwd(), relativePath);
+  return JSON.parse(readFileSync(absolutePath, "utf8")) as T;
+}
+
+function loadData(): LoadedData {
+  if (cachedData) {
+    return cachedData;
+  }
+
+  const prompts = readJsonFile<PromptRecord[]>("src/data/prompts.json");
+  const responses = readJsonFile<ResponseRecord[]>("src/data/responses.json");
+  const sources = readJsonFile<SourceRecord[]>("src/data/sources.json");
+
+  cachedData = {
+    prompts,
+    responses,
+    sources,
+    promptById: Object.fromEntries(
+      prompts.map((prompt) => [prompt.id, prompt]),
+    ) as Record<string, PromptRecord>,
+    responseByPromptId: Object.fromEntries(
+      responses.map((response) => [response.promptId, response]),
+    ) as Record<string, ResponseRecord>,
+    sourceById: Object.fromEntries(
+      sources.map((source) => [source.id, source]),
+    ) as Record<string, SourceRecord>,
+  };
+
+  return cachedData;
 }
 
 function tokenize(text: string) {
   return text.toLowerCase().match(/[a-z0-9]+/g) ?? [];
 }
 
-function findBestPrompt(query: string, mode?: DemoMode): PromptRecord {
-  const q = query.toLowerCase();
+function findBestPrompt(
+  query: string,
+  preferredMode: DemoMode | undefined,
+  prompts: PromptRecord[],
+) {
+  const normalizedQuery = query.toLowerCase();
   const tokens = tokenize(query);
-  const ranked = prompts.map((p) => {
+
+  const ranked = prompts.map((prompt) => {
     let score = 0;
-    if (mode && p.mode === mode) score += 3;
-    if (q.includes(p.text.toLowerCase())) score += 10;
-    for (const t of tokens) {
-      if (p.keywords.some((k) => k.includes(t))) score += 4;
-      if (p.text.toLowerCase().includes(t) || p.preview.toLowerCase().includes(t) || p.category.toLowerCase().includes(t)) score += 2;
+
+    if (preferredMode && prompt.mode === preferredMode) {
+      score += 3;
     }
-    return { p, score };
+
+    if (normalizedQuery.includes(prompt.text.toLowerCase())) {
+      score += 10;
+    }
+
+    for (const token of tokens) {
+      if (prompt.keywords.some((keyword) => keyword.includes(token))) {
+        score += 4;
+      }
+
+      if (
+        prompt.text.toLowerCase().includes(token) ||
+        prompt.preview.toLowerCase().includes(token) ||
+        prompt.category.toLowerCase().includes(token)
+      ) {
+        score += 2;
+      }
+    }
+
+    return { prompt, score };
   });
-  const best = ranked.sort((a, b) => b.score - a.score)[0];
-  return best?.score > 0 ? best.p : (prompts.find((p) => p.mode === mode) ?? prompts[0]);
+
+  const bestMatch = ranked.sort((left, right) => right.score - left.score)[0];
+  return bestMatch?.score > 0
+    ? bestMatch.prompt
+    : prompts.find((prompt) => prompt.mode === preferredMode) ?? prompts[0];
 }
 
-function selectSources(query: string, fallback: ResponseRecord): SourceRecord[] {
+function selectSources(
+  query: string,
+  fallback: ResponseRecord,
+  sources: SourceRecord[],
+  sourceById: Record<string, SourceRecord>,
+) {
   const tokens = tokenize(query);
   const ranked = sources
-    .map((s) => {
-      let score = fallback.sources.includes(s.id) ? 8 : 0;
-      for (const t of tokens) {
-        if (s.title.toLowerCase().includes(t) || s.domain.toLowerCase().includes(t)) score += 4;
-        if (s.snippet.toLowerCase().includes(t) || s.kind.toLowerCase().includes(t)) score += 2;
+    .map((source) => {
+      let score = fallback.sources.includes(source.id) ? 8 : 0;
+
+      for (const token of tokens) {
+        if (
+          source.title.toLowerCase().includes(token) ||
+          source.domain.toLowerCase().includes(token)
+        ) {
+          score += 4;
+        }
+
+        if (
+          source.snippet.toLowerCase().includes(token) ||
+          source.kind.toLowerCase().includes(token)
+        ) {
+          score += 2;
+        }
       }
-      return { s, score };
+
+      return { source, score };
     })
-    .sort((a, b) => b.score - a.score)
+    .sort((left, right) => right.score - left.score)
     .slice(0, 4)
-    .map((e) => e.s);
-  const ids = [...new Set([...fallback.sources, ...ranked.map((s) => s.id)])].slice(0, 4);
-  return ids.map((id) => sourceById[id]).filter(Boolean) as SourceRecord[];
+    .map((entry) => entry.source);
+
+  const orderedIds = [...fallback.sources, ...ranked.map((source) => source.id)];
+  const uniqueIds = [...new Set(orderedIds)].slice(0, 4);
+
+  return uniqueIds
+    .map((sourceId) => sourceById[sourceId])
+    .filter(Boolean) as SourceRecord[];
 }
 
-function cleanList(value: unknown, limit: number, fb: string[]): string[] {
-  if (!Array.isArray(value)) return fb.slice(0, limit);
-  const cleaned = value.map((i) => (typeof i === "string" ? i.trim() : "")).filter(Boolean).slice(0, limit);
-  return cleaned.length > 0 ? cleaned : fb.slice(0, limit);
+function cleanStringList(value: unknown, limit: number, fallback: string[]) {
+  if (!Array.isArray(value)) {
+    return fallback.slice(0, limit);
+  }
+
+  const cleaned = value
+    .map((item) => (typeof item === "string" ? item.trim() : ""))
+    .filter(Boolean)
+    .slice(0, limit);
+
+  return cleaned.length > 0 ? cleaned : fallback.slice(0, limit);
 }
 
-function parseJson(text: string) {
-  const c = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
-  const s = c.indexOf("{"), e = c.lastIndexOf("}");
-  if (s === -1 || e <= s) return null;
-  try { return JSON.parse(c.slice(s, e + 1)) as Record<string, unknown>; } catch { return null; }
-}
+function extractStructuredAnswer(text: string) {
+  const cleaned = text.replace(/^```json\s*/i, "").replace(/```$/i, "").trim();
+  const start = cleaned.indexOf("{");
+  const end = cleaned.lastIndexOf("}");
 
-function fallbackAnswer(
-  mode: DemoMode | undefined,
-  prompt: PromptRecord,
-  fb: ResponseRecord,
-  srcs: SourceRecord[],
-  label: string,
-): LiveAnswer {
-  return {
-    title: fb.title, summary: fb.executiveSummary, answer: fb.detailedAnswer,
-    takeaways: fb.takeaways, followUps: fb.followUps, sources: srcs,
-    trustBadges: fb.trustBadges, confidence: fb.confidence, trustReason: fb.trustReason,
-    trace: fb.trace, matchedPromptId: prompt.id, mode: mode ?? prompt.mode,
-    providerLabel: "T-Systems AI advisory experience", backendLabel: label, engine: "fallback",
-  };
-}
-
-function corsHeaders() {
-  return {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-}
-
-export async function OPTIONS() {
-  return new Response(null, { status: 204, headers: corsHeaders() });
-}
-
-export async function POST(request: Request): Promise<Response> {
-  const apiKey = getApiKey();
-  const model = getModel();
-
-  let query = promptById["roaming-business-eu"].text;
-  let mode: DemoMode | undefined;
-
-  try {
-    const body = await request.json() as { query?: string; mode?: DemoMode };
-    if (body.query?.trim()) query = body.query.trim();
-    mode = body.mode;
-  } catch { /* use defaults */ }
-
-  const prompt = findBestPrompt(query, mode);
-  const fb = responseByPromptId[prompt.id] ?? responses[0];
-  const srcs = selectSources(query, fb);
-
-  if (!apiKey) {
-    return new Response(
-      JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, "No API key — set OPENAI_API_KEY in Vercel")),
-      { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Key-Set": "no" } },
-    );
+  if (start === -1 || end === -1 || end <= start) {
+    return null;
   }
 
   try {
-    const sourceContext = srcs
-      .map((s) => `[${s.id}] ${s.title}\nType: ${s.kind}\nDomain: ${s.domain}\nFreshness: ${s.freshness}\nSnippet: ${s.snippet}`)
+    return JSON.parse(cleaned.slice(start, end + 1)) as StructuredAnswer;
+  } catch {
+    return null;
+  }
+}
+
+function createFallbackAnswer(
+  mode: DemoMode | undefined,
+  matchedPrompt: PromptRecord,
+  fallback: ResponseRecord,
+  selectedSources: SourceRecord[],
+  backendLabel: string,
+): LiveAnswer {
+  return {
+    title: fallback.title,
+    summary: fallback.executiveSummary,
+    answer: fallback.detailedAnswer,
+    takeaways: fallback.takeaways,
+    followUps: fallback.followUps,
+    sources: selectedSources,
+    trustBadges: fallback.trustBadges,
+    confidence: fallback.confidence,
+    trustReason: fallback.trustReason,
+    trace: fallback.trace,
+    matchedPromptId: matchedPrompt.id,
+    mode: mode ?? matchedPrompt.mode,
+    providerLabel: "T-Systems AI advisory experience",
+    backendLabel,
+    engine: "fallback",
+  };
+}
+
+async function buildGetResponse(): Promise<ResponseShape> {
+  const config = getConfig();
+
+  return {
+    status: 200,
+    payload: {
+      ok: true,
+      route: "/api/answer",
+      keySet: Boolean(config.apiKey),
+      model: config.model || null,
+    },
+  };
+}
+
+async function buildPostResponse(body: AnswerRequestBody): Promise<ResponseShape> {
+  const config = getConfig();
+
+  try {
+    const data = loadData();
+    const query = body.query?.trim() || data.promptById["roaming-business-eu"].text;
+    const mode = body.mode;
+    const matchedPrompt = findBestPrompt(query, mode, data.prompts);
+    const fallback =
+      data.responseByPromptId[matchedPrompt.id] ?? data.responses[0];
+    const selectedSources = selectSources(
+      query,
+      fallback,
+      data.sources,
+      data.sourceById,
+    );
+
+    if (!config.apiKey) {
+      return {
+        status: 200,
+        payload: createFallbackAnswer(
+          mode,
+          matchedPrompt,
+          fallback,
+          selectedSources,
+          "No OpenAI key available on Vercel",
+        ),
+        headers: {
+          "X-Magenta-Engine": "fallback",
+          "X-Magenta-Key-Set": "no",
+          "X-Magenta-Model": config.model || "unset",
+        },
+      };
+    }
+
+    const sourceContext = selectedSources
+      .map(
+        (source) =>
+          `[${source.id}] ${source.title}\nType: ${source.kind}\nDomain: ${source.domain}\nFreshness: ${source.freshness}\nSnippet: ${source.snippet}`,
+      )
       .join("\n\n");
 
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model, temperature: 0.3, max_tokens: 800,
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are MagentAI Experience, a concise T-Systems advisory assistant. " +
-              "Write as T-Systems presenting to a client. Use 'we recommend' and 'T-Systems would approach this by'. " +
-              "Reply with strict JSON only — no markdown, no prose outside JSON. " +
-              "Keys: title (string), summary (1 sentence string), answer (array of 2 short paragraphs), " +
-              "takeaways (array of 3 bullet sentences), followUps (array of 3 questions), " +
-              "citations (array of source IDs from provided sources only), trustReason (string).",
-          },
-          { role: "user", content: `Question: ${query}\nMode: ${mode ?? prompt.mode}\nSources:\n${sourceContext}` },
-        ],
-      }),
-    });
+    const systemPrompt =
+      "You are MagentAI Experience, a concise T-Systems advisory assistant. " +
+      "Write as T-Systems presenting to a client. Use 'we recommend' and 'T-Systems would approach this by'. " +
+      "Reply with strict JSON only. " +
+      "Keys: title, summary, answer, takeaways, followUps, citations, trustReason. " +
+      "answer must be an array of 2 short paragraphs. " +
+      "takeaways must be an array of 3 short sentences. " +
+      "followUps must be an array of 3 short questions. " +
+      "citations must contain only provided source IDs.";
 
-    const data = await res.json() as { choices?: Array<{ message?: { content?: string } }>; error?: { message?: string } };
+    const openAiResponse = await fetch(
+      "https://api.openai.com/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${config.apiKey}`,
+        },
+        body: JSON.stringify({
+          model: config.model,
+          temperature: 0.3,
+          max_tokens: 800,
+          messages: [
+            { role: "system", content: systemPrompt },
+            {
+              role: "user",
+              content:
+                `Question: ${query}\n` +
+                `Mode: ${mode ?? matchedPrompt.mode}\n` +
+                `Matched prompt: ${matchedPrompt.text}\n` +
+                `Sources:\n${sourceContext}`,
+            },
+          ],
+        }),
+      },
+    );
 
-    if (!res.ok) {
-      const msg = data?.error?.message ?? `OpenAI ${res.status}`;
-      return new Response(
-        JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, `API error: ${msg.slice(0, 100)}`)),
-        { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Key-Set": "yes", "X-Magenta-Error": msg } },
+    const openAiPayload = (await openAiResponse.json().catch(() => ({}))) as {
+      error?: { message?: string };
+      choices?: Array<{ message?: { content?: string } }>;
+    };
+
+    if (!openAiResponse.ok) {
+      throw new Error(
+        openAiPayload?.error?.message ||
+          `OpenAI request failed with ${openAiResponse.status}`,
       );
     }
 
-    const parsed = parseJson(data?.choices?.[0]?.message?.content ?? "");
+    const parsed = extractStructuredAnswer(
+      openAiPayload?.choices?.[0]?.message?.content ?? "",
+    );
+
     if (!parsed) {
-      return new Response(
-        JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, `Unparseable response (${model})`)),
-        { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Key-Set": "yes" } },
-      );
+      return {
+        status: 200,
+        payload: createFallbackAnswer(
+          mode,
+          matchedPrompt,
+          fallback,
+          selectedSources,
+          `OpenAI response could not be parsed (${config.model})`,
+        ),
+        headers: {
+          "X-Magenta-Engine": "fallback",
+          "X-Magenta-Key-Set": "yes",
+          "X-Magenta-Model": config.model || "unset",
+        },
+      };
     }
 
-    const citedIds = cleanList(parsed.citations, 4, srcs.map((s) => s.id));
-    const citedSrcs = citedIds.map((id) => sourceById[id]).filter(Boolean) as SourceRecord[];
+    const citedIds = cleanStringList(
+      parsed.citations,
+      4,
+      selectedSources.map((source) => source.id),
+    );
+    const citedSources = citedIds
+      .map((sourceId) => data.sourceById[sourceId])
+      .filter(Boolean) as SourceRecord[];
 
     const answer: LiveAnswer = {
-      title: (parsed.title as string)?.trim() || fb.title,
-      summary: (parsed.summary as string)?.trim() || fb.executiveSummary,
-      answer: cleanList(parsed.answer, 3, fb.detailedAnswer),
-      takeaways: cleanList(parsed.takeaways, 3, fb.takeaways),
-      followUps: cleanList(parsed.followUps, 3, fb.followUps),
-      sources: citedSrcs.length > 0 ? citedSrcs : srcs,
-      trustBadges: fb.trustBadges,
-      confidence: fb.confidence,
-      trustReason: (parsed.trustReason as string)?.trim() || fb.trustReason,
-      trace: fb.trace,
-      matchedPromptId: prompt.id,
-      mode: mode ?? prompt.mode,
+      title: parsed.title?.trim() || fallback.title,
+      summary: parsed.summary?.trim() || fallback.executiveSummary,
+      answer: cleanStringList(parsed.answer, 3, fallback.detailedAnswer),
+      takeaways: cleanStringList(parsed.takeaways, 3, fallback.takeaways),
+      followUps: cleanStringList(parsed.followUps, 3, fallback.followUps),
+      sources: citedSources.length > 0 ? citedSources : selectedSources,
+      trustBadges: fallback.trustBadges,
+      confidence: fallback.confidence,
+      trustReason: parsed.trustReason?.trim() || fallback.trustReason,
+      trace: fallback.trace,
+      matchedPromptId: matchedPrompt.id,
+      mode: mode ?? matchedPrompt.mode,
       providerLabel: "T-Systems AI advisory experience",
-      backendLabel: `OpenAI live model (${model})`,
+      backendLabel: `OpenAI live model (${config.model})`,
       engine: "openai",
     };
 
-    return new Response(JSON.stringify(answer), {
+    return {
       status: 200,
-      headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Engine": "openai", "X-Magenta-Key-Set": "yes" },
-    });
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return new Response(
-      JSON.stringify(fallbackAnswer(mode, prompt, fb, srcs, `Fetch error: ${msg.slice(0, 100)}`)),
-      { status: 200, headers: { ...corsHeaders(), "Content-Type": "application/json", "X-Magenta-Error": msg } },
-    );
+      payload: answer,
+      headers: {
+        "X-Magenta-Engine": "openai",
+        "X-Magenta-Key-Set": "yes",
+        "X-Magenta-Model": config.model || "unset",
+      },
+    };
+  } catch (error) {
+    console.error("[magenta] error:", error);
+
+    const message =
+      error instanceof Error ? error.message : "Unknown server error";
+
+    return {
+      status: 500,
+      payload: {
+        error: "Internal server error",
+        detail: message,
+        keySet: Boolean(config.apiKey),
+        model: config.model || null,
+      },
+    };
   }
+}
+
+function sendJson(
+  response: ServerResponse,
+  status: number,
+  payload: unknown,
+  headers: Record<string, string> = {},
+) {
+  response.statusCode = status;
+  response.setHeader("Content-Type", "application/json; charset=utf-8");
+  response.setHeader("Cache-Control", "no-store");
+  response.setHeader("Access-Control-Allow-Origin", "*");
+  response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  for (const [name, value] of Object.entries(headers)) {
+    response.setHeader(name, value);
+  }
+
+  response.end(JSON.stringify(payload));
+}
+
+async function readRequestBody(request: IncomingMessage & { body?: unknown }) {
+  if (request.body && typeof request.body === "object") {
+    return request.body as AnswerRequestBody;
+  }
+
+  if (typeof request.body === "string") {
+    try {
+      return JSON.parse(request.body) as AnswerRequestBody;
+    } catch {
+      return {};
+    }
+  }
+
+  const chunks: Buffer[] = [];
+
+  for await (const chunk of request) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  }
+
+  if (chunks.length === 0) {
+    return {};
+  }
+
+  try {
+    return JSON.parse(Buffer.concat(chunks).toString("utf8")) as AnswerRequestBody;
+  } catch {
+    return {};
+  }
+}
+
+export default async function handler(
+  request: IncomingMessage & { body?: unknown; method?: string },
+  response: ServerResponse,
+) {
+  if (request.method === "OPTIONS") {
+    response.statusCode = 204;
+    response.setHeader("Access-Control-Allow-Origin", "*");
+    response.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+    response.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    response.end();
+    return;
+  }
+
+  if (request.method === "GET") {
+    const result = await buildGetResponse();
+    sendJson(response, result.status, result.payload, result.headers);
+    return;
+  }
+
+  if (request.method === "POST") {
+    const body = await readRequestBody(request);
+    const result = await buildPostResponse(body);
+    sendJson(response, result.status, result.payload, result.headers);
+    return;
+  }
+
+  sendJson(response, 405, { error: "Method not allowed" });
 }
