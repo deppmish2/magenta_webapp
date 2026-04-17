@@ -1,25 +1,33 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { createAnswerHandler } from "../server/answerEngine";
+import { generateAnswer, type AnswerEngineConfig } from "../server/answerEngine";
+import type { DemoMode } from "../src/types";
 
-// Strip surrounding quotes that users sometimes copy from .env files (e.g. "sk-proj-...")
+// Strip surrounding quotes that get included when copying from .env files
 function cleanEnvValue(value: string | undefined): string {
-  if (!value) return "";
-  return value.trim().replace(/^["']|["']$/g, "");
+  return (value ?? "").trim().replace(/^["']|["']$/g, "");
 }
 
-const apiKey = cleanEnvValue(process.env.OPENAI_API_KEY);
-const model = cleanEnvValue(process.env.OPENAI_MODEL) || "gpt-4o-mini";
+const config: AnswerEngineConfig = {
+  apiKey: cleanEnvValue(process.env.OPENAI_API_KEY),
+  model: cleanEnvValue(process.env.OPENAI_MODEL) || "gpt-4o-mini",
+};
 
-if (!apiKey) {
-  console.warn("[magenta] OPENAI_API_KEY is not set — responses will use scripted fallback");
-} else {
-  console.log(`[magenta] Answer engine ready · model: ${model} · key: ${apiKey.slice(0, 12)}...`);
+console.log(
+  config.apiKey
+    ? `[magenta] ready · model: ${config.model} · key: ${config.apiKey.slice(0, 12)}...`
+    : "[magenta] OPENAI_API_KEY not set — scripted fallback active",
+);
+
+async function readBody(req: IncomingMessage): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const chunks: Buffer[] = [];
+    req.on("data", (chunk: Buffer) => chunks.push(chunk));
+    req.on("end", () => resolve(Buffer.concat(chunks).toString("utf-8")));
+    req.on("error", reject);
+  });
 }
 
-const handler = createAnswerHandler({ apiKey, model });
-
-export default async function (req: IncomingMessage, res: ServerResponse) {
-  // Allow cross-origin requests (needed if custom domain differs from API domain)
+export default async function handler(req: IncomingMessage, res: ServerResponse) {
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -30,10 +38,39 @@ export default async function (req: IncomingMessage, res: ServerResponse) {
     return;
   }
 
-  return handler(req, res, (err?: unknown) => {
-    console.error("[magenta] Unhandled handler error:", err);
+  if (req.method !== "POST") {
+    res.statusCode = 405;
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify({ error: "Method not allowed" }));
+    return;
+  }
+
+  try {
+    const raw = await readBody(req);
+    let query = "";
+    let mode: DemoMode | undefined;
+
+    if (raw) {
+      try {
+        const parsed = JSON.parse(raw) as { query?: string; mode?: DemoMode };
+        query = parsed.query ?? "";
+        mode = parsed.mode;
+      } catch {
+        // malformed JSON — use empty query, engine will pick default
+      }
+    }
+
+    console.log(`[magenta] query="${query}" mode=${mode ?? "unset"}`);
+
+    const answer = await generateAnswer({ query, mode }, config);
+
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.end(JSON.stringify(answer));
+  } catch (err) {
+    console.error("[magenta] error:", err);
     res.statusCode = 500;
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify({ error: "Internal server error" }));
-  });
+  }
 }

@@ -21,7 +21,7 @@ const responseByPromptId = Object.fromEntries(
 );
 const sourceById = Object.fromEntries(sources.map((source) => [source.id, source]));
 
-interface AnswerEngineConfig {
+export interface AnswerEngineConfig {
   apiKey: string;
   model: string;
 }
@@ -176,7 +176,7 @@ function createFallbackAnswer(
   };
 }
 
-async function generateAnswer(
+export async function generateAnswer(
   request: AnswerRequest,
   config: AnswerEngineConfig,
 ): Promise<LiveAnswer> {
