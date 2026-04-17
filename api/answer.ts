@@ -66,6 +66,8 @@ export default async function handler(req: IncomingMessage, res: ServerResponse)
 
     res.statusCode = 200;
     res.setHeader("Content-Type", "application/json; charset=utf-8");
+    res.setHeader("X-Magenta-Engine", answer.engine ?? "unknown");
+    res.setHeader("X-Magenta-Key-Set", config.apiKey ? "yes" : "no");
     res.end(JSON.stringify(answer));
   } catch (err) {
     console.error("[magenta] error:", err);
